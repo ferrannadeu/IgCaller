@@ -65,7 +65,7 @@ IgCaller returns a set of tab-separated files:
 
 ### Other notes
 
-An R script to help the study of mutational signatures in CLL is available under the "Mutational_signature_analysis_in_CLL" folder. This script aims to determine the presence/absence of non-canonical AID (signature 9) in CLL patients using an already defined catalogue of single nucleotide variants.
+An R script to help the study of mutational signatures in CLL is available under the "Mutational_signature_analysis_in_CLL" folder. This script aims to determine the presence/absence of non-canonical AID mutations (signature 9) in CLL patients using an already defined catalogue of single nucleotide variants.
 
 ### Bugs, comments and improvements
 
