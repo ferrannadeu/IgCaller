@@ -10,7 +10,7 @@ IgCaller is a python program designed to fully characterize the immunoglobulin g
 
 IgCaller is based on python3 and requires the following modules: subprocess, sys, os, itertools, operator, collections, statistics, argparse (v1.1), regex (v2.5.29 and v2.5.30), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the previous modules tested, we are not aware about any specific version requirement for running IgCaller.
 
-The only required non-python program is [samtools](http://www.htslib.org){:target="_blank"} (version 1.6 and 1.9 have been tested).
+The only required non-python program is samtools (http://www.htslib.org) (version 1.6 and 1.9 have been tested).
 
 ### Running IgCaller
 
