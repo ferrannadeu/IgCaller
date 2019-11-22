@@ -49,6 +49,9 @@ IgCaller was tested on a MacBook Pro (macOS Mojave), Ubuntu (16.04 and 18.04), a
 #### Running time:
 IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete IG gene of one tumor sample. 
 
+### Demo dataset
+A demo dataset is provided under the "Demo" folder to test IgCaller.
+
 ### Outputs
 
 IgCaller returns a set of tab-separated files:
@@ -59,6 +62,10 @@ IgCaller returns a set of tab-separated files:
 *	tumor_sample_output_IGL.tsv: File containing all IGL rearrangements.
 *	tumor_sample_output_class_switch.tsv: File containing all CSR rearrangements.
 *	tumor_sample_output_oncogenic_IG_rearrangements.tsv: File containing all oncogenic IG rearrangements (translocations, deletions, inversions, and gains) identified genome-wide.
+
+### Other notes
+
+An R script to help the study of mutational signatures in CLL is available under the "Mutational_signature_analysis_in_CLL" folder. This script aims to determine the presence/absence of non-canonical AID (signature 9) in CLL patients using an already defined catalogue of single nucleotide variants.
 
 ### Bugs, comments and improvements
 
