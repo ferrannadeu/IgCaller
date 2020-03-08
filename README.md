@@ -25,17 +25,19 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 #### Optional arguments:
 *	pathToSamtools (-ptsam): path to the directory where samtools is installed. There is no need to specify it if samtools is found in “PATH” (default = ‘empty’, assuming it is in “PATH”).
 *	outputPath (-o): path to the directory where the output should be stored. Inside the defined directory IgCaller will automatically create a folder named “tumorSample”_IgCaller where output files will be saved (default, current working directory).
-*	mappingQuality (-mq): mapping quality cut off to filter out reads (default = 0).
+*	mappingQuality (-mq): mapping quality cut off to filter out reads for IG V(D)J reconstruction (default = 0).
 *	baseQuality (-bq): base quality cut off to consider a position in samtools mpileup when reconstructing both normal and tumor sequences (default = 13).
 *	minDepth (-d): depth cut off to consider a position (default = 1).
 *	minAltDepth (-ad): alternate depth cut off to consider a potential alternate nucleotide (default = 1)
 *	vafCutoffNormal (-vafN): minimum variant allele frequency (VAF) to consider a nucleotide when reconstructing the germ line sequence using the supplied normal BAM file (if available) (default = 0.2).
 *	vafCutoff (-vaf): minimum VAF to consider a nucleotide when reconstructing the tumor sequence (default = 0.1). Try to increase this value if only unproductive rearrangements are found due to stop codons. We have observed that relatively high coverage WGS (i.e. 100x) might carry many variants (likely sequencing artifacts) at VAFs around 10-20%.
 *	tumorPurity (-p): purity of the tumor sample (i.e. tumor cell content) (default = 1). It is used to adjust the VAF of the mutations found in the tumor BAM file before filtering them using the vafCutoff, to adjust the score of each rearrangement, and to adjust the reduction of read depth in the CSR analysis.
-*	minNumberReadsTumorOncoIg (-mntonco): Minimum score supporting an IG rearrangement in order to be annotated (default = 4).
-*	minNumberReadsTumorOncoIgPass (-mntoncoPass): Minimum score supporting an IG rearrangement in the tumor sample in order to be considered as high confidence (default = 10).
-*	maxNumberReadsNormalOncoIg (-mnnonco): Maximum number of reads supporting an IG rearrangement in the normal sample in order to be considered as high confidence (default = 2).
-*	numThreads (-@): Maximum number of threads to be used by samtools (default = 1).
+*	minNumberReadsTumorOncoIg (-mntonco): minimum score supporting an IG rearrangement in order to be annotated (default = 4).
+*	minNumberReadsTumorOncoIgPass (-mntoncoPass): minimum score supporting an IG rearrangement in the tumor sample in order to be considered as high confidence (default = 10).
+*	maxNumberReadsNormalOncoIg (-mnnonco): maximum number of reads supporting an IG rearrangement in the normal sample in order to be considered as high confidence (default = 2).
+*	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
+*	numThreads (-@): maximum number of threads to be used by samtools (default = 1).
+* keepMiniIgBams (-kmb): should IgCaller keep (i.e. no remove) mini IG BAM files used in the analysis? (default = no).
 
 
 #### Basic command line to execute IgCaller:
@@ -50,7 +52,7 @@ IgCaller was tested on a MacBook Pro (macOS Mojave), Ubuntu (16.04 and 18.04), a
 IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete IG gene of one tumor sample. 
 
 ### Demo dataset
-A demo dataset is provided under the "Demo" folder to test IgCaller.
+A demo dataset tot test IgCaller is provided under the "Demo" folder.
 
 ### Outputs
 
