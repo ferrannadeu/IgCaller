@@ -1,8 +1,8 @@
 # IgCaller
 
-#### Reconstructing the IG gene rearrangements and oncogenic translocations from WGS
+#### Reconstructing immunoglobulin gene rearrangements and oncogenic translocations from WGS
 
-IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms from whole-genome sequencing data. For more information: https://rdcu.be/b5tsw.
+IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations from whole-genome sequencing in lymphoid neoplasms. For more information: https://rdcu.be/b5tsw.
 
 ![alt text](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_workflow.jpg)
 
@@ -40,7 +40,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 * keepMiniIgBams (-kmb): should IgCaller keep (i.e. no remove) mini IG BAM files used in the analysis? (default = no).
 
 
-#### Basic command line to execute IgCaller:
+#### Basic command line:
 ```
 python3 path/to/IgCaller/IgCaller_v1.py -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
 ```
@@ -49,7 +49,7 @@ python3 path/to/IgCaller/IgCaller_v1.py -I path/to/IgCaller/IgCaller_reference_f
 IgCaller was tested on a MacBook Pro (macOS Mojave), Ubuntu (16.04 and 18.04), and MareNostrum 4 (Barcelona Supercomputing Center, SUSE Linux Enterpirse Server 12 SP2 with python/3.6.1).
 
 #### Running time:
-IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete IG gene of one tumor sample. 
+IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete immunoglobulin gene of one tumor sample. 
 
 ### Demo dataset
 A demo dataset tot test IgCaller is provided under the "Demo" folder.
