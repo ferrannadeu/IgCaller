@@ -2,7 +2,7 @@
 
 #### Reconstructing the IG gene rearrangements and oncogenic translocations from WGS
 
-IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms from whole-genome sequencing data.
+IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms from whole-genome sequencing data. For more information: https://rdcu.be/b5tsw.
 
 ![alt text](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_workflow.jpg)
 
@@ -68,6 +68,12 @@ IgCaller returns a set of tab-separated files:
 ### Other notes
 
 An R script to help the study of mutational signatures in CLL is available under the "Mutational_signature_analysis_in_CLL" folder. This script aims to determine the presence/absence of non-canonical AID mutations (signature 9) in CLL patients using an already defined catalogue of single nucleotide variants.
+
+### Citation
+
+If you use IgCaller, please cite:
+
+Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing immunoglobulin gene rearrangements and oncogenic translocations from whole-genome sequencing in lymphoid neoplasms. Nature Communications 11, 3390 (2020). https://doi.org/10.1038/s41467-020-17095-7.
 
 ### Bugs, comments and improvements
 
