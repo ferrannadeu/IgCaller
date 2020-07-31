@@ -38,7 +38,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 *	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
 *	numThreads (-@): maximum number of threads to be used by samtools (default = 1).
 * keepMiniIgBams (-kmb): should IgCaller keep (i.e. no remove) mini IG BAM files used in the analysis? (default = no).
-* sequencing (-seq): sequencing technique (whole-genome sequencing (wgs) or whole-exome sequencing (wes)) (default = wgs)
+* sequencing (-seq): sequencing technique (whole-genome sequencing (wgs) or whole-exome sequencing (wes)) (default = wgs).
 
 
 #### Basic command line:
