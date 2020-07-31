@@ -43,7 +43,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 
 #### Basic command line:
 ```
-python3 path/to/IgCaller/IgCaller_v1.py -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
+python3 path/to/IgCaller/IgCaller_v1.1.py -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
 ```
 
 #### Tested on:
