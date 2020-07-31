@@ -8,7 +8,7 @@ IgCaller is a python program designed to fully characterize the immunoglobulin g
 
 ### Requirements
 
-IgCaller is based on python3 and requires the following modules: subprocess, sys, os, itertools, operator, collections, statistics, argparse (v1.1), regex (v2.5.29 and v2.5.30), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the previous modules tested, we are not aware about any specific version requirement for running IgCaller.
+IgCaller is based on python3 and requires the following modules: statistics, regex (v2.5.29 and v2.5.30), argparse (v1.1), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the modules tested, we are not aware about any specific version requirement for running IgCaller. Other modules used by IgCaller but already included in base python are: subprocess, sys, os, itertools, operator, collections.   
 
 The only required non-python program is [samtools](http://www.htslib.org) (version 1.6 and 1.9 have been tested).
 
@@ -38,6 +38,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 *	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
 *	numThreads (-@): maximum number of threads to be used by samtools (default = 1).
 * keepMiniIgBams (-kmb): should IgCaller keep (i.e. no remove) mini IG BAM files used in the analysis? (default = no).
+* sequencing (-seq): sequencing technique (whole-genome sequencing (wgs) or whole-exome sequencing (wes)) (default = wgs)
 
 
 #### Basic command line:
@@ -49,7 +50,7 @@ python3 path/to/IgCaller/IgCaller_v1.py -I path/to/IgCaller/IgCaller_reference_f
 IgCaller was tested on a MacBook Pro (macOS Mojave), Ubuntu (16.04 and 18.04), and MareNostrum 4 (Barcelona Supercomputing Center, SUSE Linux Enterpirse Server 12 SP2 with python/3.6.1).
 
 #### Running time:
-IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete immunoglobulin gene of one tumor sample. 
+IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete immunoglobulin gene of one tumor sample. Execution time increases with sequencing coverage and number of potential rearrangements present in the sample.
 
 ### Demo dataset
 A demo dataset tot test IgCaller is provided under the "Demo" folder.
@@ -75,7 +76,14 @@ If you use IgCaller, please cite:
 
 Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing immunoglobulin gene rearrangements and oncogenic translocations from whole-genome sequencing in lymphoid neoplasms. Nature Communications 11, 3390 (2020). https://doi.org/10.1038/s41467-020-17095-7.
 
-### Bugs, comments and improvements
+### Contact
 
 Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be very much appreciated!
 
+### Releases
+
+* Current master branch (v1.1):  
+** Minor bug that made IgCaller crash in 1 out of the >1000 samples tested is now solved.
+** Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
+* v1.0:
+** First version of IgCaller as described in the original manuscript.
