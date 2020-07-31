@@ -83,7 +83,7 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be 
 ### Releases
 
 * Current master branch (v1.1):  
-** Minor bug that made IgCaller crash in 1 out of the >1000 samples tested is now solved.
-** Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
+  - Minor bug that made IgCaller crash in 1 out of the >1000 samples tested is now solved.
+  - Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
 * v1.0:
-** First version of IgCaller as described in the original manuscript.
+  - First version of IgCaller as described in the original manuscript.
