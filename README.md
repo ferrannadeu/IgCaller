@@ -10,7 +10,7 @@ IgCaller is a python program designed to fully characterize the immunoglobulin g
 
 IgCaller is based on python3 and requires the following modules: statistics, regex (v2.5.29 and v2.5.30), argparse (v1.1), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the modules tested, we are not aware about any specific version requirement for running IgCaller. Other modules used by IgCaller but already included in base python are: subprocess, sys, os, itertools, operator, collections.   
 
-The only required non-python program is [samtools](http://www.htslib.org) (version 1.6 and 1.9 have been tested).
+The only required non-python program is [samtools](http://www.htslib.org) (v1.6 and v1.9 have been tested).
 
 ### Running IgCaller
 
@@ -18,7 +18,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 *	inputsFolder (-I): path to the folder containing the supplied IgCaller reference files.
 *	genomeVersion (-V): version of the reference human genome used when aligning the WGS data (hg19 or hg38).
 *	chromosomeAnnotation (-C): chromosome annotation [ensembl = without 'chr' (i.e. 1); ucsc = with 'chr' (i.e. chr1)].
-*	bamT (-T): path to tumor BAM file aligned with [BWA-MEM](http://bio-bwa.sourceforge.net/).
+*	bamT (-T): path to tumor BAM file aligned with [BWA-MEM](http://bio-bwa.sourceforge.net/) (v0.7.15 and v0.7.17 have been tested).
 *	bamN (-N): path to normal BAM file aligned with BWA-MEM, if available.
 *	refGenome (-R): path to reference genome FASTA file (not mandatory, but recommended, when specifying a normal BAM file. Mandatory when bamN is not specified).
 
