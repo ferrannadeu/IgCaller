@@ -53,7 +53,7 @@ IgCaller was tested on a MacBook Pro (macOS Mojave), Ubuntu (16.04 and 18.04), a
 IgCaller only requires 1 CPU, and it usually takes <2-5 minutes to characterize the complete immunoglobulin gene of one tumor sample. Execution time increases with sequencing coverage and number of potential rearrangements present in the sample.
 
 ### Demo dataset
-A demo dataset tot test IgCaller is provided under the "Demo" folder.
+A demo dataset to test IgCaller is provided under the "Demo" folder.
 
 ### Outputs
 
