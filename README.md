@@ -18,9 +18,9 @@ The only required non-python program is [samtools](http://www.htslib.org) (versi
 *	inputsFolder (-I): path to the folder containing the supplied IgCaller reference files.
 *	genomeVersion (-V): version of the reference human genome used when aligning the WGS data (hg19 or hg38).
 *	chromosomeAnnotation (-C): chromosome annotation [ensembl = without 'chr' (i.e. 1); ucsc = with 'chr' (i.e. chr1)].
-*	bamT (-T): path to tumor BAM file.
-*	bamN (-N): path to normal BAM file, if available.
-*	refGenome (-R): path to reference genome FASTA file (not mandatory, but recommended, when specifying a normal BAM file. Mandatory when bamN not specified).
+*	bamT (-T): path to tumor BAM file aligned with [BWA-MEM](http://bio-bwa.sourceforge.net/).
+*	bamN (-N): path to normal BAM file aligned with BWA-MEM, if available.
+*	refGenome (-R): path to reference genome FASTA file (not mandatory, but recommended, when specifying a normal BAM file. Mandatory when bamN is not specified).
 
 #### Optional arguments:
 *	pathToSamtools (-ptsam): path to the directory where samtools is installed. There is no need to specify it if samtools is found in “PATH” (default = ‘empty’, assuming it is in “PATH”).
