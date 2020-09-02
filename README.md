@@ -14,13 +14,11 @@ The only required non-python program is [samtools](http://www.htslib.org) (v1.6 
 
 ### Download
 
-Clone the IgCaller repository:
+Download and uncompress the ZIP file containing the code and required reference files or clone the IgCaller repository:
 
 ```
 git clone https://github.com/ferrannadeu/IgCaller
 ```
-
-Or download and uncompress the ZIP file containing the code and required reference files.
 
 ### Running IgCaller
 
