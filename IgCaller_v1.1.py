@@ -303,7 +303,7 @@ for GENE in ["IGH", "IGK", "IGL", "CSR"]:
 
 # 15) Genome-wide IG translocations
 print("IgCaller: genome-wide IG rearrangements...")
-translocationsALL, translocationsPASS = getIgTranslocations(pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco)
+translocationsALL, translocationsPASS = getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco)
 
 Vseq = open(miniSamT.replace("_miniSam.sam", "_output_oncogenic_IG_rearrangements.tsv"), "w")
 Vseq.write("\n".join(translocationsALL))		

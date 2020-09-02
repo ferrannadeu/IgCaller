@@ -8,6 +8,8 @@ import operator
 from collections import Counter
 from scipy import stats
 from statistics import mean
+import gzip
+import pickle
 
 # dicts
 complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'N': 'N', 'R': 'R', '[': ']', ']': '[', '(': ')', ')': '('}
@@ -1780,7 +1782,7 @@ def classSwitchAnalysis(data, bedFile, baseq, chromGene, bamT, bamN, pathToSamto
 	
 	return(class_switch, class_switch_filt, reductionMeans)
 
-def getIgTranslocations(pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco):
+def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco):
 	
 	chrom14 = coordsToSubset.split(" ")[0].split(":")[1].split("-") # IGH region 
 	chrom22 = coordsToSubset.split(" ")[1].split(":")[1].split("-") # IGL region
@@ -1965,7 +1967,15 @@ def getIgTranslocations(pathToSamtools, threadsForSamtools, bamT, bamN, chrom, c
 		samfile.close()
 		subprocess.call("rm "+samN, shell=True)	
 	
-	# 4. Prepare output and return
+	# 4. Prepare output, annotate RepeatMasker and GeneID, and return
+	mask_expand = 20
+	if genomeVersion == "hg19":
+		RepeatMasker_dicti = pickle.load(gzip.open(inputsFolder+'/hg19/dicts/RepeatMasker_rmsk_hg19_dictionary.pkl.gz', 'rb'))
+		GeneID_dicti = pickle.load(gzip.open(inputsFolder+'/hg19/dicts/NCBI_RefSeq_All_hg19_dictionary.pkl.gz', 'rb'))
+	else:
+		RepeatMasker_dicti = pickle.load(gzip.open(inputsFolder+'/hg38/dicts/RepeatMasker_rmsk_hg38_dictionary.pkl.gz', 'rb'))
+		GeneID_dicti = pickle.load(gzip.open(inputsFolder+'/hg38/dicts/NCBI_RefSeq_All_hg38_dictionary.pkl.gz', 'rb'))
+
 	translocationsList = []
 	for key1 in translocations:
 		for key2 in translocations[key1]:
@@ -1975,7 +1985,7 @@ def getIgTranslocations(pathToSamtools, threadsForSamtools, bamT, bamN, chrom, c
 	translocationsList = sorted(translocationsList, key=operator.itemgetter(8), reverse=True)
 	translocationsALL = list()
 	translocationsPASS = list()
-	translocationsALL.append("\t".join(["Rearrangement", "Mechanism", "Score", "Reads in normal", "ChrA", "PositionA", "StrandA", "ChrB", "PositionB", "StrandB"]))
+	translocationsALL.append("\t".join(["Rearrangement", "Mechanism", "Score", "Reads in normal", "RepeatMasker", "ChrA", "PositionA", "StrandA", "ChrB", "PositionB", "StrandB", "GeneID", "Distance to gene"]))
 	
 	for i in translocationsList:
 		
@@ -2025,13 +2035,65 @@ def getIgTranslocations(pathToSamtools, threadsForSamtools, bamT, bamN, chrom, c
 			positionB = i[idxB + (2 if strandB == "+" else 1)]
 			
 		score = round( i[8] / tumorPurity, 1 ) 
-		scoreNormal = i[9]	
-		translocationsALL.append("\t".join([traAnnot, mechanism, str(score), str(scoreNormal), chrA, positionA, strandA, chrB, positionB, strandB]))
+		scoreNormal = i[9]
+		
+		# RepeatMasker and GeneID:	
+		repeatMasker = "none"	
+		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0]) and int(positionA) <= int(chrom14[1]): geneID = "IGH"
+		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0]) and int(positionA) <= int(chrom22[1]): geneID = "IGL"
+		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0]) and int(positionA) <= int(chrom2[1]): geneID = "IGK"
+		else:
+			gene = ""
+			minDistance = 250000
+			for element in GeneID_dicti[chrA.replace("chr","")]:
+				if ( int(positionA) >= int(element[0]) and int(positionA) <= int(element[1]) ) or abs(int(positionA) - int(element[0])) < minDistance or abs(int(positionA) - int(element[1])) < minDistance:
+					gene = element[2]
+					if int(positionA) >= int(element[0]) and int(positionA) <= int(element[1]): 
+						minDistance = 0
+						break
+					else: 
+						minDistance = abs(int(positionA) - int(element[0])) if abs(int(positionA) - int(element[0])) < abs(int(positionA) - int(element[1])) else abs(int(positionA) - int(element[1]))
+			if gene.startswith("IGHV"): repeatMasker = "IGHV_pseudogene"
+			if gene.startswith("IGHD"): repeatMasker = "IGHD_pseudogene"
+			geneID = gene if gene != "" else "none"
+			minDistance = minDistance if minDistance < 250000 else "NA"
+			
+			for element in RepeatMasker_dicti[chrA.replace("chr","")]:
+				if int(positionA) >= int(element[0]) - mask_expand and int(positionA) <= int(element[1]) + mask_expand:
+					repeatMasker = element[2]
+					break
+		
+		if chrB == chrom+"14" and int(positionB) >= int(chrom14[0]) and int(positionB) <= int(chrom14[1]): geneID = geneID+" - IGH"
+		elif chrB == chrom+"22" and int(positionB) >= int(chrom22[0]) and int(positionB) <= int(chrom22[1]): geneID = geneID+" - IGL"
+		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0]) and int(positionB) <= int(chrom2[1]): geneID = geneID+" - IGK"
+		else:
+			gene = ""
+			minDistance = 250000
+			for element in GeneID_dicti[chrB.replace("chr","")]:
+				if ( int(positionB) >= int(element[0]) and int(positionB) <= int(element[1]) ) or abs(int(positionB) - int(element[0])) < minDistance or abs(int(positionB) - int(element[1])) < minDistance:
+					gene = element[2]
+					if int(positionB) >= int(element[0]) and int(positionB) <= int(element[1]):
+						minDistance = 0
+						break
+					else:
+						minDistance = abs(int(positionB) - int(element[0])) if abs(int(positionB) - int(element[0])) < abs(int(positionB) - int(element[1])) else abs(int(positionB) - int(element[1]))
+			gene = gene if gene != "" else "none"
+			if gene.startswith("IGHV"): repeatMasker = "IGHV_pseudogene"
+			if gene.startswith("IGHD"): repeatMasker = "IGHD_pseudogene"
+			geneID = geneID+" - "+gene
+			minDistance = minDistance if minDistance < 250000 else "NA"
+			
+			for element in RepeatMasker_dicti[chrB.replace("chr","")]:
+				if int(positionB) >= int(element[0]) - mask_expand and int(positionB) <= int(element[1]) + mask_expand:
+					repeatMasker = element[2]
+					break
+		
+		translocationsALL.append("\t".join([traAnnot, mechanism, str(score), str(scoreNormal), repeatMasker, chrA, positionA, strandA, chrB, positionB, strandB, geneID, str(minDistance)]))
 	
 		# Pass
 		if score >= mntoncoPass and ( scoreNormal == "NA" or scoreNormal <= mnnonco ):
-			if mechanism == "Translocation": traAnnot = traAnnot+" ["+chrA+":"+positionA+":"+strandA+";"+chrB+":"+positionB+":"+strandB+"]"
-			else: traAnnot = traAnnot+" ["+strandA+"/"+strandB+"]"
-			translocationsPASS.append("\t".join(["Oncogenic IG rearrangement", traAnnot, mechanism, str(score)+" ("+str(scoreNormal)+")"]+["NA"]*6))
+			if mechanism == "Translocation": traAnnot = traAnnot+" ["+chrA+":"+positionA+":"+strandA+";"+chrB+":"+positionB+":"+strandB+"] ["+geneID+"]"
+			else: traAnnot = traAnnot+" ["+strandA+"/"+strandB+"] ["+geneID+"]"
+			translocationsPASS.append("\t".join(["Oncogenic IG rearrangement", traAnnot, mechanism, str(score)+" ("+str(scoreNormal)+") ["+repeatMasker+"]"]+["NA"]*6))
 	
 	return(translocationsALL, translocationsPASS)
