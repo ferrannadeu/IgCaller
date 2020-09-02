@@ -20,13 +20,13 @@ Clone the IgCaller repository:
 git clone https://github.com/ferrannadeu/IgCaller
 ```
 
-Or download and uncompress the ZIP file containing the code. If downloading the ZIP file, make sure that the following files stored on Git LFS are included on your donwloaded file:
+Or download and uncompress the ZIP file containing the code. If downloading the ZIP file, the following files should be manually downloaded and placed in their respective folders:
 * IgCaller_reference_files/hg19/dicts/[RepeatMasker_rmsk_hg19_dictionary.pkl.gz](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_reference_files/hg19/dicts/RepeatMasker_rmsk_hg19_dictionary.pkl.gz)
 * IgCaller_reference_files/hg38/dicts/[RepeatMasker_rmsk_hg38_dictionary.pkl.gz](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_reference_files/hg38/dicts/RepeatMasker_rmsk_hg38_dictionary.pkl.gz)
 * Demo/BAM/[1344-01-01ND.bam](https://github.com/ferrannadeu/IgCaller/blob/master/Demo/BAM/1344-01-01ND.bam)
 * Demo/BAM/[1344-01-03TD.bam](https://github.com/ferrannadeu/IgCaller/blob/master/Demo/BAM/1344-01-03TD.bam)
 
-If these files were not included in your ZIP file, download them manually and place them in their respective folders. While BAM files are only required if you want to test IgCaller using our demo dataset, the two RepeatMasker_rmsk_hgXX_dictionary.pkl.gz files are required.
+These files are stored on Git LFS and they are not included in the downloaded ZIP file (only a pointer is downloaded) but they are downloaded when "git clone"ing the repository. While BAM files are only needed to test IgCaller on our demo dataset, the two RepeatMasker_rmsk_hgXX_dictionary.pkl.gz files are required.
 
 ### Running IgCaller
 
