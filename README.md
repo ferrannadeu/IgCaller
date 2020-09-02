@@ -14,7 +14,7 @@ The only required non-python program is [samtools](http://www.htslib.org) (v1.6 
 
 ### Download
 
-Download and uncompress the ZIP file OR clone the IgCaller repository:
+Download and uncompress the ZIP file or clone the IgCaller repository:
 
 ```
 git clone https://github.com/ferrannadeu/IgCaller
@@ -95,7 +95,7 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be 
 ### Releases
 
 * Current master branch (v1.1): 
-  * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity DNA sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated. Note that most false positive translocations initially called by IgCaller map within simple repeats. This flag should allow to easily clean up the list of oncogenic IG translocations reported without spending too much time doing manual validation. 
+  * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated. Note that most false positive translocations initially called by IgCaller map within simple repeats. This flag should allow to clean up the list of oncogenic IG translocations reported without spending too much time doing manual/visual validation. 
   * Added the annotation of the gene closest to the non-IG breakpoint of the oncogenic IG rearrangements identified based on RefSeq annotations (maximum upstream and downstream distance considered: 250kb).
   * Minor bug that made IgCaller crash in 1 out of the >1,000 samples tested is now fixed.
   * Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
