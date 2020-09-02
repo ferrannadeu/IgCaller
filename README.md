@@ -8,9 +8,24 @@ IgCaller is a python program designed to fully characterize the immunoglobulin g
 
 ### Requirements
 
-IgCaller is based on python3 and requires the following modules: statistics, regex (v2.5.29 and v2.5.30), argparse (v1.1), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the modules tested, we are not aware about any specific version requirement for running IgCaller. Other modules used by IgCaller but already included in base python are: subprocess, sys, os, itertools, operator, collections.   
+IgCaller is based on python3 and requires the following modules: statistics, regex (v2.5.29 and v2.5.30), argparse (v1.1), numpy (1.16.2 and v1.16.3), and scipy (v1.2.1 and v1.3.0). Although providing the versions of the modules tested, we are not aware about any specific version requirement for running IgCaller. Other modules used by IgCaller but already included in base python are: subprocess, sys, os, itertools, operator, collections, gzip, pickle.   
 
 The only required non-python program is [samtools](http://www.htslib.org) (v1.6 and v1.9 have been tested).
+
+### Download IgCaller
+
+Clone the IgCaller repository:
+
+```
+git clone https://github.com/ferrannadeu/IgCaller
+```
+
+Or download and uncompress the ZIP file containing the code. If downloading the ZIP file, make sure that the following files stored on Git LFS are included on your donwloaded file:
+* IgCaller_reference_files/hg19/dicts/RepeatMasker_rmsk_hg19_dictionary.pkl.gz [here](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_reference_files/hg19/dicts/RepeatMasker_rmsk_hg19_dictionary.pkl.gz)
+* IgCaller_reference_files/hg38/dicts/RepeatMasker_rmsk_hg38_dictionary.pkl.gz [here](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_reference_files/hg38/dicts/RepeatMasker_rmsk_hg38_dictionary.pkl.gz)
+* Demo/BAM/1344-01-01ND.bam [here](https://github.com/ferrannadeu/IgCaller/blob/master/Demo/BAM/1344-01-01ND.bam)
+* Demo/BAM/1344-01-03TD.bam [here](https://github.com/ferrannadeu/IgCaller/blob/master/Demo/BAM/1344-01-03TD.bam)
+If these files were not included in your ZIP file, download them manually and place them in their respective folders. While BAM files are only required if you want to test IgCaller using our demo dataset, the two RepeatMasker_rmsk_hgXX_dictionary.pkl.gz files are required.
 
 ### Running IgCaller
 
@@ -82,7 +97,9 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be 
 
 ### Releases
 
-* Current master branch (v1.1):  
+* Current master branch (v1.1): 
+  * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity DNA sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated. Note that most false positive translocations initially called by IgCaller map within simple repeats. This flag should allow to easily clean up the list of oncogenic IG translocations reported without spending too much time doing manual validation. 
+  * Added the annotation of the gene closest to the non-IG breakpoint of the oncogenic IG rearrangements identified based on RefSeq annotations (maximum upstream and downstream distance considered: 250kb).
   * Minor bug that made IgCaller crash in 1 out of the >1,000 samples tested is now fixed.
   * Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
 * v1.0:
