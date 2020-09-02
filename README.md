@@ -12,7 +12,7 @@ IgCaller is based on python3 and requires the following modules: statistics, reg
 
 The only required non-python program is [samtools](http://www.htslib.org) (v1.6 and v1.9 have been tested).
 
-### Download IgCaller
+### Download
 
 Clone the IgCaller repository:
 
