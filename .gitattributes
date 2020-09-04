@@ -1,6 +1,2 @@
 * linguist-vendored
 *.py linguist-vendored=false
-
-# clone lfs files:
-*.bam filter=lfs diff=lfs merge=lfs -text
-*.bam !text !filter !merge !diff
