@@ -9,12 +9,12 @@ t(2;22)	Translocation	9.0	3	(G)n;Simple_repeat;Simple_repeat	2	33141325	-	22	229
 t(15;22)	Translocation	7.0	12	L1PA2;LINE;L1	15	87071321	-	22	22715602	+	AGBL1 - IGL	0
 t(2;16)	Translocation	6.0	8	HSATII;Satellite;Satellite	2	89836829	-	16	34184914	+	IGK - CCNYL3	79805
 t(6;22)	Translocation	6.0	3	none	6	161082192	-	22	22464432	+	LPA - IGL	0
-t(14;18)	Translocation	5.0	7	(CA)n;Simple_repeat;Simple_repeat	14	106319877	+	18	62646152	+	IGH - none	NA
 t(14;15)	Translocation	5.0	7	L1ME1;LINE;L1	14	106677154	-	15	21209525	+	IGH - FAM30C	0
+t(14;18)	Translocation	5.0	7	(CA)n;Simple_repeat;Simple_repeat	14	106319877	+	18	62646152	+	IGH - none	NA
 t(4;22)	Translocation	5.0	2	L1HS;LINE;L1	4	46799105	+	22	22715704	-	COX7B2 - IGL	0
-gain(14:106047117-106166891)	Gain	4.0	0	(TCTCTG)n;Simple_repeat;Simple_repeat	14	106047117	-	14	106166891	+	MIR8071-1 - IGH	40335
 t(8;14)	Translocation	4.0	1	LTR13;LTR;ERVK	8	144926755	+	14	107047351	+	NRBP2 - IGH	3610
+gain(14:106047117-106166891)	Gain	4.0	0	(TCTCTG)n;Simple_repeat;Simple_repeat	14	106047117	-	14	106166891	+	MIR8071-1 - IGH	40335
 t(14;18)	Translocation	4.0	6	(CA)n;Simple_repeat;Simple_repeat	14	106319902	-	18	62646152	-	IGH - none	NA
-t(21;22)	Translocation	4.0	5	(AGATG)n;Simple_repeat;Simple_repeat	21	9551807	+	22	22641341	+	none - IGL	NA
 t(16;22)	Translocation	4.0	2	L1HS;LINE;L1	16	33760842	+	22	22715602	+	ENPP7P13 - IGL	174100
+t(21;22)	Translocation	4.0	5	(AGATG)n;Simple_repeat;Simple_repeat	21	9551807	+	22	22641341	+	none - IGL	NA
 t(6;22)	Translocation	4.0	2	L1MEe;LINE;L1	6	160521751	-	22	22837345	-	IGF2R - IGL	0
