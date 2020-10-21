@@ -1790,7 +1790,7 @@ def classSwitchAnalysis(data, bedFile, baseq, chromGene, bamT, bamN, pathToSamto
 	
 	return(class_switch, class_switch_filt, reductionMeans)
 
-def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco):
+def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco, mncPoN):
 	
 	chrom14 = coordsToSubset.split(" ")[0].split(":")[1].split("-") # IGH region 
 	chrom22 = coordsToSubset.split(" ")[1].split(":")[1].split("-") # IGL region
@@ -1993,7 +1993,7 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 	translocationsList = sorted(translocationsList, key=operator.itemgetter(8), reverse=True)
 	translocationsALL = list()
 	translocationsPASS = list()
-	translocationsALL.append("\t".join(["Rearrangement", "Mechanism", "Score", "Reads in normal", "RepeatMasker", "ChrA", "PositionA", "StrandA", "ChrB", "PositionB", "StrandB", "GeneID", "Distance to gene"]))
+	translocationsALL.append("\t".join(["Rearrangement", "Mechanism", "Score", "Reads in normal", "Count in PoN", "RepeatMasker", "ChrA", "PositionA", "StrandA", "ChrB", "PositionB", "StrandB", "GeneID", "Distance to gene"]))
 	
 	for i in translocationsList:
 		
@@ -2045,14 +2045,15 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 		score = round( i[8] / tumorPurity, 1 ) 
 		scoreNormal = i[9]
 		
+		
 		# RepeatMasker and GeneID:	
+		minDistance = 250000
 		repeatMasker = "none"	
 		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0]) and int(positionA) <= int(chrom14[1]): geneID = "IGH"
 		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0]) and int(positionA) <= int(chrom22[1]): geneID = "IGL"
 		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0]) and int(positionA) <= int(chrom2[1]): geneID = "IGK"
 		else:
 			gene = ""
-			minDistance = 250000
 			for element in GeneID_dicti[chrA.replace("chr","")]:
 				if ( int(positionA) >= int(element[0]) and int(positionA) <= int(element[1]) ) or abs(int(positionA) - int(element[0])) < minDistance or abs(int(positionA) - int(element[1])) < minDistance:
 					gene = element[2]
@@ -2076,7 +2077,6 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0]) and int(positionB) <= int(chrom2[1]): geneID = geneID+" - IGK"
 		else:
 			gene = ""
-			minDistance = 250000
 			for element in GeneID_dicti[chrB.replace("chr","")]:
 				if ( int(positionB) >= int(element[0]) and int(positionB) <= int(element[1]) ) or abs(int(positionB) - int(element[0])) < minDistance or abs(int(positionB) - int(element[1])) < minDistance:
 					gene = element[2]
@@ -2096,12 +2096,44 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 					repeatMasker = element[2]
 					break
 		
-		translocationsALL.append("\t".join([traAnnot, mechanism, str(score), str(scoreNormal), repeatMasker, chrA, positionA, strandA, chrB, positionB, strandB, geneID, str(minDistance)]))
-	
-		# Pass
-		if score >= mntoncoPass and ( scoreNormal == "NA" or scoreNormal <= mnnonco ):
+		
+		# remove sv within the same IG locus
+		if geneID in ["IGH - IGH", "IGK - IGK", "IGL - IGL"]: continue 
+		
+		
+		# PoN:
+		ponCount = 0
+		
+		if geneID.split(" - ")[0] in ["IGH", "IGK", "IGL"]: 
+			igLocus = geneID.split(" - ")[0]
+			igOrder = 0
+		else:
+			igLocus = geneID.split(" - ")[1]
+			igOrder = 1
+		
+		if genomeVersion == "hg19": PoN = open(inputsFolder+'/hg19/PoN/hg19_PoN.tsv', 'r')
+		else: PoN = open(inputsFolder+'/hg38/PoN/hg38_PoN.tsv', 'r')
+		
+		for ponLine in PoN:
+			if ponLine.startswith("Rearrangement"): continue
+			ponList = ponLine.rstrip("\n").split("\t")
+			if igLocus == ponList[12].split(" - ")[igOrder]:
+				if igOrder == 0:
+					if chrB.replace("chr", "") == ponList[9] and int(positionB) >= int(ponList[10])-1000 and int(positionB) <= int(ponList[10])+1000 and strandB == ponList[11]:
+						ponCount += 1
+				else:
+					if chrA.replace("chr", "") == ponList[6] and int(positionA) >= int(ponList[7])-1000 and int(positionA) <= int(ponList[7])+1000 and strandA == ponList[8]:
+						ponCount += 1
+		PoN.close()
+		
+		
+		# return all
+		translocationsALL.append("\t".join([traAnnot, mechanism, str(score), str(scoreNormal), str(ponCount), repeatMasker, chrA, positionA, strandA, chrB, positionB, strandB, geneID, str(minDistance)]))
+		
+		# return pass
+		if score >= mntoncoPass and ( scoreNormal == "NA" or scoreNormal <= mnnonco ) and ponCount <= mncPoN:
 			if mechanism == "Translocation": traAnnot = traAnnot+" ["+chrA+":"+positionA+":"+strandA+";"+chrB+":"+positionB+":"+strandB+"] ["+geneID+"]"
 			else: traAnnot = traAnnot+" ["+strandA+"/"+strandB+"] ["+geneID+"]"
-			translocationsPASS.append("\t".join(["Oncogenic IG rearrangement", traAnnot, mechanism, str(score)+" ("+str(scoreNormal)+") ["+repeatMasker+"]"]+["NA"]*6))
+			translocationsPASS.append("\t".join(["Oncogenic IG rearrangement", traAnnot, mechanism, str(score)+" ("+str(scoreNormal)+") ["+str(ponCount)+"] ["+repeatMasker+"]"]+["NA"]*6))
 	
 	return(translocationsALL, translocationsPASS)
