@@ -40,9 +40,10 @@ git clone https://github.com/ferrannadeu/IgCaller
 *	vafCutoffNormal (-vafN): minimum variant allele frequency (VAF) to consider a nucleotide when reconstructing the germ line sequence using the supplied normal BAM file (if available) (default = 0.2).
 *	vafCutoff (-vaf): minimum VAF to consider a nucleotide when reconstructing the tumor sequence (default = 0.1). Try to increase this value if only unproductive rearrangements are found due to stop codons. We have observed that relatively high coverage WGS (i.e. 100x) might carry many variants (likely sequencing artifacts) at VAFs around 10-20%.
 *	tumorPurity (-p): purity of the tumor sample (i.e. tumor cell content) (default = 1). It is used to adjust the VAF of the mutations found in the tumor BAM file before filtering them using the vafCutoff, to adjust the score of each rearrangement, and to adjust the reduction of read depth in the CSR analysis.
-*	minNumberReadsTumorOncoIg (-mntonco): minimum score supporting an IG rearrangement in order to be annotated (default = 4).
+*	minNumberReadsTumorOncoIg (-mntonco): minimum score supporting an IG rearrangement in order to be annotated (default = 5).
 *	minNumberReadsTumorOncoIgPass (-mntoncoPass): minimum score supporting an IG rearrangement in the tumor sample in order to be considered as high confidence (default = 10).
 *	maxNumberReadsNormalOncoIg (-mnnonco): maximum number of reads supporting an IG rearrangement in the normal sample in order to be considered as high confidence (default = 2).
+* maxNumberCountInPoN (-mncPoN): maximum number of count in panel of normals (PoN) in order to be considered as high confidence (default=2).
 *	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
 *	numThreads (-@): maximum number of threads to be used by samtools (default = 1).
 * keepMiniIgBams (-kmb): should IgCaller keep (i.e. no remove) mini IG BAM files used in the analysis? (default = no).
@@ -90,10 +91,11 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be 
 
 ### Releases
 
-* Current master branch (v1.1): 
-  * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated. Note that most false positive translocations initially called by IgCaller map within simple repeats. This flag should allow to clean up the list of oncogenic IG translocations reported without spending too much time doing manual/visual validation. 
+* v1.1 (current master branch): 
+  * Added a panel of normals (PoN) with the oncogenic IG rearrangements found by IgCaller in normal WGS data, which can be considered as sequencing artifacts and filtered out from the tumoral samples. When filtering using these PoN, the breakpoint in the IG locus is not considered based on its position but considering the IG locus as a whole (i.e. if the break occurs in the IGH, IGK or IGL locus irrespectively of the exact position), while the exact position of the non-IG breakpoint is considered (with a +/- 1,000 bp window). The normal samples analyzed in the IgCaller manuscript were used to build a PoN for hg19 (n=243 samples) and hg38 (n=161). See optional argument --maxNumberCountInPoN (-mncPoN) to adjust this filter.
+  * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated.
   * Added the annotation of the gene closest to the non-IG breakpoint of the oncogenic IG rearrangements identified based on RefSeq annotations (maximum upstream and downstream distance considered: 250kb).
   * Minor bug that made IgCaller crash in 1 out of the >1,000 samples tested is now fixed.
-  * Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.
+  * Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.  
 * v1.0:
   * First version of IgCaller as described in the original manuscript.
