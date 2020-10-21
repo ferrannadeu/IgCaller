@@ -103,8 +103,8 @@ parser.add_argument('-p', '--tumorPurity',
 parser.add_argument('-mntonco', '--minNumberReadsTumorOncoIg', 
 					dest = "mntonco",
 					action = "store",
-					default = "4",
-					help = "Minimum score supporting an oncogenic IG rearrangement in order to be annotated [default=4]")
+					default = "5",
+					help = "Minimum score supporting an oncogenic IG rearrangement in order to be annotated [default=5]")
 
 parser.add_argument('-mntoncoPass', '--minNumberReadsTumorOncoIgPass', 
 					dest = "mntoncoPass",
@@ -117,6 +117,12 @@ parser.add_argument('-mnnonco', '--maxNumberReadsNormalOncoIg',
 					action = "store",
 					default = "2",
 					help = "Maximum number of reads supporting an oncogenic IG rearrangement in the normal sample in order to be considered as high confidence [default=2]")
+
+parser.add_argument('-mncPoN', '--maxNumberCountInPoN', 
+					dest = "mncPoN",
+					action = "store",
+					default = "2",
+					help = "Maximum number of count in panel of normals (PoN) in order to be considered as high confidence [default=2]")
 
 parser.add_argument('-mqOnco', '--mappingQualityOncoIg',
 					dest = "mapqOnco",
@@ -163,6 +169,7 @@ tumorPurity = float(options.tumorPurity)
 mntonco = int(options.mntonco)
 mntoncoPass = int(options.mntoncoPass)
 mnnonco = int(options.mnnonco)
+mncPoN = int(options.mncPoN)
 mapqOnco = options.mapqOnco
 threadsForSamtools = options.threadsForSamtools
 keepMiniIgBams = options.keepMiniIgBams
@@ -303,7 +310,7 @@ for GENE in ["IGH", "IGK", "IGL", "CSR"]:
 
 # 15) Genome-wide IG translocations
 print("IgCaller: genome-wide IG rearrangements...")
-translocationsALL, translocationsPASS = getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco)
+translocationsALL, translocationsPASS = getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForSamtools, bamT, bamN, chrom, coordsToSubset, tumorPurity, mntonco, mntoncoPass, mnnonco, mapqOnco, mncPoN)
 
 Vseq = open(miniSamT.replace("_miniSam.sam", "_output_oncogenic_IG_rearrangements.tsv"), "w")
 Vseq.write("\n".join(translocationsALL))		
