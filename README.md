@@ -90,12 +90,13 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be very much appreciated!
 
 ### Releases
-
+* Master branch:
+  * Minor bug that made IgCaller crash in a specific scenario when annotating the gene near the breakpoint of the translocations is now fixed.
 * v1.1: 
   * Added a panel of normals (PoN) with the oncogenic IG rearrangements found by IgCaller in normal WGS data, which can be considered as sequencing artifacts and filtered out from the tumoral samples. When filtering using these PoN, the breakpoint in the IG locus is not considered based on its position but considering the IG locus as a whole (i.e. if the break occurs in the IGH, IGK or IGL locus irrespectively of the exact position), while the exact position of the non-IG breakpoint is considered (with a +/- 1,000 bp window). The normal samples analyzed in the IgCaller manuscript were used to build a PoN for hg19 (n=243 samples) and hg38 (n=161). See optional argument --maxNumberCountInPoN (-mncPoN) to adjust this filter.
   * Added the annotation whether the non-IG breakpoint of the IG rearrangements identified map within interspersed repeats and low complexity sequences according to the [RepeatMasker UCSC track](https://genome.ucsc.edu/cgi-bin/hgTrackUi?g=rmsk). repName, repClass and	repFamily are annotated.
   * Added the annotation of the gene closest to the non-IG breakpoint of the oncogenic IG rearrangements identified based on RefSeq annotations (maximum upstream and downstream distance considered: 250 kb).
-  * Minor bugs that made IgCaller crash in a few out of >1,000 samples tested are now fixed.
+  * Minor bug that made IgCaller crash in 1 out of the >1,000 samples tested is now fixed.
   * Added compatibility for BAM files obtained from whole-exome sequencing (see optional argument --sequencing/-seq). The functionality of IgCaller is the same for WGS and WES samples with only a small difference in the pre-defined filtering step.  
 * v1.0:
   * First version of IgCaller as described in the original manuscript.
