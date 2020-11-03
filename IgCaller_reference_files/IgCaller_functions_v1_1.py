@@ -2049,9 +2049,9 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 		# RepeatMasker and GeneID:	
 		minDistance = 250000
 		repeatMasker = "none"	
-		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0]) and int(positionA) <= int(chrom14[1]): geneID = "IGH"
-		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0]) and int(positionA) <= int(chrom22[1]): geneID = "IGL"
-		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0]) and int(positionA) <= int(chrom2[1]): geneID = "IGK"
+		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0])-200 and int(positionA) <= int(chrom14[1])+200: geneID = "IGH"
+		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0])-200 and int(positionA) <= int(chrom22[1])+200: geneID = "IGL"
+		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0])-200 and int(positionA) <= int(chrom2[1])+200: geneID = "IGK"
 		else:
 			gene = ""
 			for element in GeneID_dicti[chrA.replace("chr","")]:
@@ -2072,9 +2072,9 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 					repeatMasker = element[2]
 					break
 		
-		if chrB == chrom+"14" and int(positionB) >= int(chrom14[0]) and int(positionB) <= int(chrom14[1]): geneID = geneID+" - IGH"
-		elif chrB == chrom+"22" and int(positionB) >= int(chrom22[0]) and int(positionB) <= int(chrom22[1]): geneID = geneID+" - IGL"
-		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0]) and int(positionB) <= int(chrom2[1]): geneID = geneID+" - IGK"
+		if chrB == chrom+"14" and int(positionB) >= int(chrom14[0])-200 and int(positionB) <= int(chrom14[1])+200: geneID = geneID+" - IGH"
+		elif chrB == chrom+"22" and int(positionB) >= int(chrom22[0])-200 and int(positionB) <= int(chrom22[1])+200: geneID = geneID+" - IGL"
+		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0])-200 and int(positionB) <= int(chrom2[1])+200: geneID = geneID+" - IGK"
 		else:
 			gene = ""
 			for element in GeneID_dicti[chrB.replace("chr","")]:
