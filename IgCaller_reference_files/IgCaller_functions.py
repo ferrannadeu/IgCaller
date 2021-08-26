@@ -127,7 +127,7 @@ def convertSamToAnnotatedTable(miniSamT, chromGene, GENE):
 			split2 = w[10].split(',') # split SA...
 			
 		
-			if GENE != "CSR" and (w[10].startswith("SA:Z") or sum([int(i[0]) for i in two1 if "S" in i]) >= 10): # split if SA or S >= 10 in cigar
+			if GENE != "CSR" and (w[10].startswith("SA:Z") or sum([int(i[0]) for i in two1 if "S" in i]) >= 8): # split if SA or S >= 8 in cigar
 				if abs(int(w[8])) > 10000:  w[11] = "split-insertSize"
 				else: w[11] = "split"
 				
@@ -1646,10 +1646,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 			
 			## b) no Kde-RSS:
 			else:
-				
-				### b1) check if same CDR3 is already annotated...
-				cdr3TripList = [trip[keys][18] for keys in trip]		
-				if line[19] != "NA" and line[19] in cdr3TripList:
+				### b1) check if same CDR3 is already annotated...	
+				if line[19] != "NA" and line[19] in [trip[keys][18] for keys in trip]:
 					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
 						dict_spl_ins = trip[keys][-2]
 						dict_mq = float(trip[keys][-1].split(" ")[0])
@@ -1666,8 +1664,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 							else:
 								pr = 1
 			
-				### b2) exactly the same VDJ is already annotated, keep the one with higher score, quality, or CDR3 info
-				if line[0] in trip: 
+				### b2) check if exactly the same VDJ is already annotated...
+				elif line[0] in trip: 
 					dict_spl_ins = trip[line[0]][-2]
 					dict_mq = float(trip[line[0]][-1].split(" ")[0])
 					dict_cdr3 = trip[line[0]][18]
@@ -1688,46 +1686,47 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 					else:
 						pr = 1
 				
-				### b3) not exact VDJ is already annotated...
-				for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
-					ts = keys.split(" - ") # annotated values
-					nw = line[0].split(" - ") # new value
-					common = set(ts).intersection(nw) # intersection between values in dict and value analysed
-					dict_spl_ins = trip[keys][-2]
-					dict_mq = float(trip[keys][-1].split(" ")[0])
-					dict_cdr3 = trip[keys][18]
-					
-					#### 2 genes in common (for IGH)
-					if len(common) == 2: 
-						if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
-							pr = 1
-						elif len(ts) < len(nw): # if the other way around... keep the new one
-							del trip[keys]
-						elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
-							del trip[keys]
-						elif line[19] == "NA" and dict_cdr3 != "NA":
-							pr = 1
-						elif spl_ins >= dict_spl_ins-10-cutoffScore and spl_ins <= dict_spl_ins+10+cutoffScore and spl_ins > 10+cutoffScore and dict_spl_ins > 10+cutoffScore: # if similar scores and higher than 10+cutoffScore in both, filter based on quality
-							if mq > dict_mq + 10:
+				### b3) check if a "not exact VDJ" is already annotated...
+				else:
+					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
+						ts = keys.split(" - ") # annotated values
+						nw = line[0].split(" - ") # new value
+						common = set(ts).intersection(nw) # intersection between values in dict and value analysed
+						dict_spl_ins = trip[keys][-2]
+						dict_mq = float(trip[keys][-1].split(" ")[0])
+						dict_cdr3 = trip[keys][18]
+						
+						#### 2 genes in common (for IGH)
+						if len(common) == 2: 
+							if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
+								pr = 1
+							elif len(ts) < len(nw): # if the other way around... keep the new one
 								del trip[keys]
-							elif mq > dict_mq - 10 and spl_ins > dict_spl_ins: # if similar mq, then filter by score 
+							elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
 								del trip[keys]
+							elif line[19] == "NA" and dict_cdr3 != "NA":
+								pr = 1
+							elif spl_ins >= dict_spl_ins-10-cutoffScore and spl_ins <= dict_spl_ins+10+cutoffScore and spl_ins > 10+cutoffScore and dict_spl_ins > 10+cutoffScore: # if similar scores and higher than 10+cutoffScore in both, filter based on quality
+								if mq > dict_mq + 10:
+									del trip[keys]
+								elif mq > dict_mq - 10 and spl_ins > dict_spl_ins: # if similar mq, then filter by score 
+									del trip[keys]
+								else:
+									pr = 1
+							elif spl_ins > dict_spl_ins: # just by different score
+								del trip[keys]						
 							else:
 								pr = 1
-						elif spl_ins > dict_spl_ins: # just by different score
-							del trip[keys]						
-						else:
-							pr = 1
-					
-					#### 1 gene in common (IGLV or IGKV gene)
-					elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
-						if nw[1].replace("D", "") == ts[1].replace("D", ""):
-							if spl_ins > dict_spl_ins:
-								del trip[keys]
-							else:
-								pr = 1			
+						
+						#### 1 gene in common (IGLV or IGKV gene)
+						elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
+							if nw[1].replace("D", "") == ts[1].replace("D", ""):
+								if spl_ins > dict_spl_ins:
+									del trip[keys]
+								else:
+									pr = 1
 				
-				### add if needed
+				### b4) add if needed
 				if pr == 0:
 					trip[line[0]] = line[1:]
 	
