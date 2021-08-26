@@ -1,1 +1,1 @@
-Genes	Mechanisms	N_split	N_insertSize	Start_J	End_J	N_split_rescued_J	Start_V	End_V	N_split_rescued_V	Seq_J	Seq_D	Seq_V	Seq_V_normal	Seq	V-gene_pct_identity_to_germline	Length_considered_identity	Functionality	Junction_amino_acid_sequence	Score	MQ
+Genes	Mechanisms	N_split	N_insertSize	Start_J	End_J	N_split_rescued_J	Start_V	End_V	N_split_rescued_V	Seq_J	Seq_D	Seq_V	Seq_V_normal	Seq	V-gene_pct_identity_to_germline	Length_considered_identity	Functionality	Junction_amino_acid_sequence	Score	MQ	VariantsPhasedInV
