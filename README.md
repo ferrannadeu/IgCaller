@@ -88,7 +88,7 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 
 ### Contact
 
-Bugs, comments and improvements can be send to *nadeu@clinic.cat*. They will be very much appreciated!
+Bugs, comments and improvements can be send to *nadeu@clinic.cat*.
 
 ### Releases
 * Master branch (v1.2):
