@@ -127,7 +127,7 @@ def convertSamToAnnotatedTable(miniSamT, chromGene, GENE):
 			split2 = w[10].split(',') # split SA...
 			
 		
-			if GENE != "CSR" and (w[10].startswith("SA:Z") or sum([int(i[0]) for i in two1 if "S" in i]) >= 8): # split if SA or S >= 8 in cigar
+			if GENE != "CSR" and (w[10].startswith("SA:Z") or sum([int(i[0]) for i in two1 if "S" in i]) >= 5): # split if SA or S >= 5 in cigar
 				if abs(int(w[8])) > 10000:  w[11] = "split-insertSize"
 				else: w[11] = "split"
 				
