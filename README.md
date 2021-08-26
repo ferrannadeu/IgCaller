@@ -45,11 +45,11 @@ git clone https://github.com/ferrannadeu/IgCaller
 *	vafCutoff (-vaf): minimum VAF to consider a nucleotide when reconstructing the tumor sequence when working with phased reads and without phased reads, respectively (two numbers between 0-1 separated by a comma, default=0.66,0.1). Try to increase these values if only unproductive rearrangements are found due to stop codons. We have observed that relatively high coverage WGS data (i.e. 100x) might carry many variants (likely sequencing artifacts) at VAFs around 10-20%.
 * scoreCutoff (-s): minimum score supporting a gene rearrangement in order to be considered as high confidence (default will consider 3 for wgs/wes and 15 for capture. Usase: -s X where X is any number).
 * shortReportedVseq (-shortV): make V sequence start at approx FR1 (yes/no, default=yes).
+*	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
 *	minNumberReadsTumorOncoIg (-mntonco): minimum score supporting an IG rearrangement in order to be annotated (default = 5).
 *	minNumberReadsTumorOncoIgPass (-mntoncoPass): minimum score supporting an IG rearrangement in the tumor sample in order to be considered as high confidence (default = 10).
 *	maxNumberReadsNormalOncoIg (-mnnonco): maximum number of reads supporting an IG rearrangement in the normal sample in order to be considered as high confidence (default = 2).
 * maxNumberCountInPoN (-mncPoN): maximum number of count in panel of normals (PoN) in order to be considered as high confidence (default=2).
-*	mappingQualityOncoIg (-mqOnco): mapping quality cut off to filter out reads when analyzing oncogenic IG rearrangements (default = 15).
 
 #### Basic command line:
 ```
