@@ -2,7 +2,7 @@
 
 #### Reconstructing immunoglobulin gene rearrangements and oncogenic translocations from WGS, WES, and capture NGS data
 
-IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms. It was originally developed to work with WGS data but it has been extended to work with WES and high-coverage, capture NGS data For more information: https://rdcu.be/b5tsw.
+IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms. It was originally developed to work with WGS data but it has been extended to work with WES and high-coverage, capture NGS data. For more information: https://rdcu.be/b5tsw.
 
 ![alt text](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_workflow.jpg)
 
