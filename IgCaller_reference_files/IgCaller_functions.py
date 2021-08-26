@@ -1720,7 +1720,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						
 						#### 1 gene in common (IGLV or IGKV gene)
 						elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
-							if nw[1].replace("D", "") == ts[1].replace("D", ""):
+							if nw[1].replace("D", "") == ts[1].replace("D", "") and ts[0] != "IGKKde":
 								if spl_ins > dict_spl_ins:
 									del trip[keys]
 								else:
