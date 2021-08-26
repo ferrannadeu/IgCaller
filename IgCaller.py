@@ -218,7 +218,7 @@ SUMM = open(wkDir+"/"+originalBamT.split("/")[-1].replace(".bam", "_output_filte
 SUMM.write("Analysis\tAnnotation\tMechanism\tScore\tMQ\tV-PhaseInfo\tV-gene_pct_identity_to_germline\tLength_considered_identity\tFunctionality\tJunction_amino_acid_sequence\tSequence\n")
 
 ## Create mini IG-bam for tumor and normal (if available):
-print("IgCaller: creating IG BAM files...")
+print("IgCaller: creating IG mini BAM files...")
 bamT = wkDir+"/"+originalBamT.split("/")[-1]
 comms = pathToSamtools+"samtools view -@ "+threadsForSamtools+" -h -F 1024 -q "+mapq+" -b "+originalBamT+" "+coordsToSubset+" > "+bamT  # -F 1024 (read is PCR or optical duplicate)
 subprocess.call(comms, shell=True)
@@ -301,7 +301,7 @@ for GENE in ["IGH", "IGK", "IGL", "CSR"]:
 		
 		# 13) Save output:
 		Vseq = open(miniSamT.replace("_miniSam.sam", "_output_"+GENE+".tsv"), "w")
-		Vseq.write("Genes\tMechanisms\tN_split\tN_insertSize\tStart_J\tEnd_J\tN_split_rescued_J\tStart_V\tEnd_V\tN_split_rescued_V\tSeq_J\tSeq_D\tSeq_V\tSeq_V_normal\tSeq\tV-gene_pct_identity_to_germline\tLength_considered_identity\tFunctionality\tJunction_amino_acid_sequence\tScore\tMQ\tVariantsPhasedInV\n")
+		Vseq.write("Genes\tMechanisms\tN_split\tN_insertSize\tStart_J\tEnd_J\tN_split_rescued_J\tStart_V\tEnd_V\tN_split_rescued_V\tSeq_J\tSeq_D\tSeq_V\tSeq_V_normal\tSeq\tV-gene_pct_identity_to_germline\tLength_considered_identity\tFunctionality\tJunction_amino_acid_sequence\tScore\tMQ\tV-PhaseInfo\n")
 		Vseq.write("\n".join(['\t'.join(map(str, (item[i] for i in list(range(0,14))+list(range(15,22))+[14]))) for item in information]))
 		Vseq.close()
 
