@@ -91,7 +91,9 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 Bugs, comments and improvements can be send to *nadeu@clinic.cat*.
 
 ### Releases
-* Master branch (v1.2):
+* Master branch (v1.2.1):
+  * Corrected internal split-read annotation that made IgCaller crash in a subset of samples aligned to a reference genome that included "alt" contigs. 
+* v1.2:
   * General improvements (major):
     * Added compatibility for reference genomes containing lowercase nucleotides (lowercase nucleotides are automatically converted to uppercase in the fly).
     * Better tolerance of ambiguous nucleotides in the sequences.
