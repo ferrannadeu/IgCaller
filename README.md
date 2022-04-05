@@ -2,7 +2,7 @@
 
 #### Reconstructing immunoglobulin gene rearrangements and oncogenic translocations from WGS, WES, and capture NGS data
 
-IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms. It was originally developed to work with WGS data but it has been extended to work with WES and high-coverage, capture-based NGS data. For more information: https://rdcu.be/b5tsw.
+IgCaller is a python program designed to fully characterize the immunoglobulin gene rearrangements and oncogenic translocations in lymphoid neoplasms. It was originally developed to work with WGS data but it has been extended to work with WES and high-coverage, capture-based NGS data. For more information, please read the original [publication](https://rdcu.be/b5tsw).
 
 ![alt text](https://github.com/ferrannadeu/IgCaller/blob/master/IgCaller_workflow.jpg)
 
@@ -92,7 +92,7 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*.
 
 ### Releases
 * Master branch (v1.2.1):
-  * Corrected internal split-read annotation that made IgCaller crash in a subset of samples aligned to a reference genome that included "alt" contigs. 
+  * Corrected internal split-read annotation that made IgCaller crash in a subset of samples aligned to a reference genome that included "alt" contigs. See [issue #5](https://github.com/ferrannadeu/IgCaller/issues/5) for details. 
 * v1.2:
   * General improvements (major):
     * Added compatibility for reference genomes containing lowercase nucleotides (lowercase nucleotides are automatically converted to uppercase in the fly).
