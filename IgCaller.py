@@ -4,9 +4,9 @@ import subprocess
 import sys
 
 # Manage inputs
-parser  = argparse.ArgumentParser(prog='IgCaller', description='''IgCaller v1.2 (https://github.com/ferrannadeu/IgCaller)''')
+parser  = argparse.ArgumentParser(prog='IgCaller', description='''IgCaller v1.2.1 (https://github.com/ferrannadeu/IgCaller)''')
 
-parser.add_argument('-v', '--version', action='version', version="%(prog)s v1.2")
+parser.add_argument('-v', '--version', action='version', version="%(prog)s v1.2.1")
 
 parser.add_argument('-I', '--inputsFolder',
 					dest = "inputsFolder",
