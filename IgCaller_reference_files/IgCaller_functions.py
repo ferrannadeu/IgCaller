@@ -1677,7 +1677,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 		mech = line[1]
 		spl_ins = line[-2]
 		mq = float(line[-1].split(" ")[0])
-		phasing_pct = float(line[14].split("/")[0])/float(line[14].split(" ")[0].split("/")[1])*100 if line[14].split(" ")[0].split("/")[1] != "0"  else 100
+		phasing_pct = 0 if line[14] == "NA" else float(line[14].split("/")[0])/float(line[14].split(" ")[0].split("/")[1])*100 if line[14].split(" ")[0].split("/")[1] != "0" else 100
 		
 		# 1) Hard filters
 		## Mechanism
@@ -1724,7 +1724,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
 						dict_spl_ins = trip[keys][-2]
 						dict_mq = float(trip[keys][-1].split(" ")[0])
-						dict_phasing_pct = float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
+						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 						if line[19] == trip[keys][18]:
 							if spl_ins >= dict_spl_ins-(2*cutoffScore) and spl_ins <= dict_spl_ins+(2*cutoffScore) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both, filter based on phasing or, if similar phasing, by quality
 								if phasing_pct > dict_phasing_pct + 10:
@@ -1747,7 +1747,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 					dict_spl_ins = trip[line[0]][-2]
 					dict_mq = float(trip[line[0]][-1].split(" ")[0])
 					dict_cdr3 = trip[line[0]][18]
-					dict_phasing_pct = float(trip[line[0]][13].split("/")[0])/float(trip[line[0]][13].split(" ")[0].split("/")[1])*100 if trip[line[0]][13].split(" ")[0].split("/")[1] != "0" else 100
+					dict_phasing_pct = 0 if trip[line[0]][13] == "NA" else float(trip[line[0]][13].split("/")[0])/float(trip[line[0]][13].split(" ")[0].split("/")[1])*100 if trip[line[0]][13].split(" ")[0].split("/")[1] != "0" else 100
 
 					if line[19] != "NA" and dict_cdr3 == "NA": # if the same VDJ, keep the one with info in CDR3 aa seq
 						del trip[line[0]]
@@ -1778,7 +1778,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						dict_spl_ins = trip[keys][-2]
 						dict_mq = float(trip[keys][-1].split(" ")[0])
 						dict_cdr3 = trip[keys][18]
-						dict_phasing_pct = float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
+						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 
 						#### 2 genes in common (for IGH)
 						if len(common) == 2: 
