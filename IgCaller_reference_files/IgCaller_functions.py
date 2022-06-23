@@ -1721,7 +1721,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 			else:
 				### b1) check if same CDR3 is already annotated...	
 				if line[19] != "NA" and line[19] in [trip[keys][18] for keys in trip]:
-					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iterati on
+					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
 						dict_spl_ins = trip[keys][-2]
 						dict_mq = float(trip[keys][-1].split(" ")[0])
 						dict_phasing_pct = float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
