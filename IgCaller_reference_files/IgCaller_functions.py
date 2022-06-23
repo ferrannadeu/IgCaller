@@ -1792,7 +1792,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 								pr = 1
 							elif spl_ins >= dict_spl_ins-(2*cutoffScore) and spl_ins <= dict_spl_ins+(2*cutoffScore) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both, filter based on phasing or, if similar phasing, by quality
 								if phasing_pct > dict_phasing_pct + 10:
-									del trip[line[0]]
+									del trip[keys]
 								elif dict_phasing_pct > phasing_pct + 10:
 									pr = 1
 								elif mq > dict_mq + 10:
