@@ -306,7 +306,7 @@ for GENE in ["IGH", "IGK", "IGL", "CSR"]:
 		Vseq.close()
 
 		if len(trip) != 0:
-			SUMM.write("\n".join([GENE+"\t"+item+"\t"+'\t'.join(map(str, map(trip[item].__getitem__, [0,19,20,13,15,16,17,18,14]))) for item in trip])+"\n") ###### modified
+			SUMM.write("\n".join([GENE+"\t"+item+"\t"+'\t'.join(map(str, map(trip[item].__getitem__, [0,19,20,13,15,16,17,18,14]))) for item in trip])+"\n")
 		else:
 			SUMM.write(GENE+"\tNo rearrangement found"+"\tNA"*9+"\n")
 	
