@@ -21,7 +21,7 @@ changeAmbiguousBases = {'A': 'A', 'C': 'C', 'G': 'G', 'T': 'T', 'R': 'N', 'Y': '
 tripletsToAA = {'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
 				'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T', 
 				'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K', 
-				'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',             
+				'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
 				'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L', 
 				'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P', 
 				'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q', 
@@ -34,7 +34,7 @@ tripletsToAA = {'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
 				'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L', 
 				'TAC':'Y', 'TAT':'Y', 'TAA':'*', 'TAG':'*', 
 				'TGC':'C', 'TGT':'C', 'TGA':'*', 'TGG':'W'
-				}  
+				}
 
 # functions
 def smithwaterman(x, y, match_score=5, mismatch_cost=4, gap_cost=8):
@@ -683,7 +683,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 							if passar == 0:
 								g = 0 # saves possible snps in patient
 								dna = {} # save possible snps 
-								w[4] = w[4].replace(",", w[2]).replace(".", w[2]) # we change reference nucleotide
+								w[4] = w[4].replace(",", w[2]).replace(".", w[2]) # change reference nucleotide
 								w[4] = w[4].upper() # convert all nucleotides to uppercase 
 								
 								while g < len(w[4]): # look for ACGT in each position
@@ -703,7 +703,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 											else: # adds an occurrence in dictionary
 												dna[ins] += 1
 												dna[w[4][g-2]] -= 1
-											g += now + 1  # we jump as many positions as number shows (number shows nucleotides inserted)
+											g += now + s # jump as many positions as number shows (number shows nucleotides inserted) plus "s"
 											
 										elif prev == "-": # deletion
 											dele = w[4][g-2]+"("+indels+")"
@@ -713,7 +713,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 											else: # adds an occurrence in dictionary
 												dna[dele] += 1
 												dna[w[4][g-2]] -= 1
-											g += now + 1 # we jump as many positions as number shows (number shows nucleotides deleted)
+											g += now + s # jump as many positions as number shows (number shows nucleotides deleted) plus "s"
 									
 									elif w[4][g] in ("A", "C", "G", "T"):
 										if w[4][g] not in dna: # appends mutation to dictionary
@@ -727,7 +727,6 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 											g += 2
 										else: # last base in read is encoded A$ => A is kept in the previous round, here skip $
 											g += 1
-									
 								
 								dna = sorted(dna.items(), key=lambda dna: dna[1], reverse = True) # from high to low, the possible mutations
 								
@@ -742,7 +741,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 
 								
 								if sq == int(w[1]): # positions in interval with info
-									wild[sq] = tp # we append mutation to sequence instead of reference nucleotide
+									wild[sq] = tp # append mutation to sequence instead of reference nucleotide
 									
 								else: # non existing positions
 									while sq < int(w[1]):
@@ -781,18 +780,89 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 					countMuts = 0
 					countMutsPhased = 0
 					countSNPsNotPhased = 0
+					mutPhased = "" # to keep last mutation "chr:pos-pos_nuc" to phase on the fly based on last mutation
+					mutPhasedDone = "" 
 					
 					passar = 0 # used to jump sequences if there is a deletion in tumor sequence
 					sq = int(i[z])
 					for j, j2 in zip(current, currentJV):
-						if int(j2.rstrip("\n").split("\t")[3]) >= depth: # phased
+
+						# phased with J-V reads
+						if int(j2.rstrip("\n").split("\t")[3]) >= depth: 
 							v=j2.rstrip("\n").split("\t")
 							vafCutoffToUse = float(vafCutoff[0]) 
 							inPhase = "yes"
-						else: # unphased
-							v=j.rstrip("\n").split("\t")
-							vafCutoffToUse = float(vafCutoff[1])
-							inPhase = "no"
+
+						# not directly phased with J-V reads
+						else: 
+							depthMutPhase = 0 # initialize
+							j3 = "" # initialize
+							if mutPhased != "": # try to phase reads by last mutation (if any)
+								if mutPhased != mutPhasedDone: # if mut not phased yet... do it
+									mutPhasedDone = mutPhased
+									readNamePhaseMut = []
+									subprocess.call(pathToSamtools+"samtools mpileup -B --output-QNAME -Q "+baseq+fr+mutPhased.split("_")[0]+" "+miniBamT+ " > "+miniBamT.replace(".bam", "_output_mpileup_MutPhased.tsv"), shell=True) # get reads spaining last mutation
+									MUTPHASE = open(miniBamT.replace(".bam", "_output_mpileup_MutPhased.tsv"), "r")
+									for mutPhaseLine in MUTPHASE:
+										v = mutPhaseLine.rstrip("\n").split("\t")
+										v[4] = v[4].replace(",", v[2]).replace(".", v[2]) # change reference nucleotide
+										v[4] = v[4].upper() # convert all nucleotides to uppercase
+										k = 0 # shows the number of sequences which have to be jumped
+										readIndex = 0 # keep the index (ie order/position) of the read
+										while k < len(v[4]): # look for ACGT in each position
+											if v[4][k].isdigit():
+												if v[4][k+1].isdigit(): s = 2 # insertion/deletion of > 9 bases
+												else: s = 1 # insertion/deletion of < 10 bases
+
+												prev = v[4][k-1] # previous shows + for insertions or - for deletions
+												now = int(v[4][k:k+s]) # current number of nucleotides being added or removed
+												indels = (v[4][k+s:k+s+now]) # nucleotides being added or removed
+												k += now + s # jump as many positions as number shows (number shows nucleotides inserted/deleted) plus "s"
+											
+											elif v[4][k] in ("A", "C", "G", "T"):
+												if v[4][k] == mutPhased.split("_")[1]:
+													readNamePhaseMut.append(v[6].split(",")[readIndex]) # append readname to list if it has seen the mutation
+												k += 1
+												readIndex += 1 # sum 1 read position
+											
+											else: # ^, $, N, etc.
+												if v[4][k] == "^": # to include first base (^6A) (6=ASCI quality; A base of interest)
+													k += 2
+												else: # last base in read is encoded A$ => A is kept in the previous round, here skip $
+													k += 1
+									MUTPHASE.close()
+								
+									# make bam with reads phased with last mutation
+									subprocess.call(pathToSamtools+"samtools view -H "+miniBamT+" > "+miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.sam"), shell=True)
+									readNamePhaseMut_sam = open(miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.sam"), "a")
+									miniSam = open(miniBamT.replace("miniBam.bam", "miniSam.sam"), "r")
+									for readLine in miniSam:
+										if readLine.rstrip("\n").split("\t")[0] in readNamePhaseMut:
+											readNamePhaseMut_sam.write(readLine)
+									readNamePhaseMut_sam.close()
+									miniSam.close()
+									subprocess.call(pathToSamtools+"samtools view -h -b -o "+miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.bam")+" "+miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.sam"), shell=True) 
+									subprocess.call(pathToSamtools+"samtools index "+miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.bam"), shell=True) 
+								
+								# mpileup for the ongoing position only using bam with reads phased with last mutation
+								subprocess.call(pathToSamtools+"samtools mpileup -a -B -A -Q "+baseq+fr+chromGene+":"+j2.rstrip("\n").split("\t")[1]+"-"+j2.rstrip("\n").split("\t")[1]+" "+miniBamT.replace("miniBam.bam", "miniSam_readNameMutPhased.bam")+ " > "+miniBamT.replace(".bam", "_output_mpileup_readNameMutPhased.tsv"), shell=True) # allow -A (anomalous read pairs) in tumor sample only
+								currentJV_MUTPHASE = open(miniBamT.replace(".bam", "_output_mpileup_readNameMutPhased.tsv"), "r")
+								for mutPhaseLine in currentJV_MUTPHASE:
+									depthMutPhase = int(mutPhaseLine.rstrip("\n").split("\t")[3]) # keep at depthMutPhase
+									j3 = mutPhaseLine # keep at j3
+								currentJV_MUTPHASE.close()
+
+							# check if enough phased-on-the-fly reads
+							if depthMutPhase >= depth: 
+								v=j3.rstrip("\n").split("\t")
+								vafCutoffToUse = float(vafCutoff[0]) 
+								inPhase = "yes" 
+							
+							# then, unphased...
+							else:
+								v=j.rstrip("\n").split("\t")
+								vafCutoffToUse = float(vafCutoff[1])
+								inPhase = "no"
 						
 						v[4] = v[4].replace(",", v[2]).replace(".", v[2]) # we change reference nucleotide
 						v[4] = v[4].upper() # convert all nucleotides to uppercase
@@ -837,7 +907,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 										else: # adds an occurrence in dictionary
 											newmut[ins] += 1
 											newmut[v[4][k-2]] -= 1
-										k += now + 1  # we jump as many positions as number shows (number shows nucleotides inserted)
+										k += now + s # jump as many positions as number shows (number shows nucleotides inserted) plus "s"
 										
 									elif prev == "-": # if it is deletion
 										dele = v[4][k-2]+"("+indels+")"
@@ -847,7 +917,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 										else: # adds an occurrence in dictionary
 											newmut[dele] += 1
 											newmut[v[4][k-2]] -= 1
-										k += now + 1 # we jump as many positions as number shows (number shows nucleotides deleted)
+										k += now + s # jump as many positions as number shows (number shows nucleotides deleted) plus "s"
 								
 								elif v[4][k] in ("A", "C", "G", "T"):
 									if v[4][k] not in newmut: # appends mutation to dictionary
@@ -905,7 +975,9 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 									
 									# update count phased muts
 									countMuts += 1
-									if inPhase == "yes": countMutsPhased += 1
+									if inPhase == "yes":
+										countMutsPhased += 1
+										mutPhased = v[0]+":"+v[1]+"-"+v[1]+"_"+other[0] # add info last mutation to mutPhased to be used in subsequent phasing (if needed)
 									
 								# no indel in normal neither mutation in tumor, add fist SNP in both:
 								elif len(snps) > 0: 
