@@ -92,7 +92,7 @@ Bugs, comments and improvements can be send to *nadeu@clinic.cat*.
 
 ### Releases
 * Master branch (v1.2.1):
-  * Improved phasing of mutations within the rearranged allele. When reads spanning the J-V rearrangement are not covering a fraction of the V gene, IgCaller now tries to phase reads on the fly based on the previous mutations identified in the V gene, which increases sensitivity and improves the phasing of the mutations.
+  * Improved phasing of mutations within the rearranged allele. When reads spanning the J-V rearrangement are not covering a fraction of the V gene, IgCaller now tries to phase reads on the fly based on the previous mutations identified in the V gene.
   * Corrected internal split-read annotation that made IgCaller crash in a subset of samples aligned to a reference genome that included "alt" contigs. See [issue #5](https://github.com/ferrannadeu/IgCaller/issues/5) for details. 
 * v1.2:
   * General improvements (major):
