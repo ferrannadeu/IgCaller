@@ -1676,7 +1676,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 		pr = 0
 		mech = line[1]
 		spl_ins = line[-2]
-		#mq = float(line[-1].split(" ")[0])
+		mq = float(line[-1].split(" ")[0])
 		phasing_pct = 0 if line[14] == "NA" else float(line[14].split("/")[0])/float(line[14].split(" ")[0].split("/")[1])*100 if line[14].split(" ")[0].split("/")[1] != "0" else 100
 		
 		# 1) Hard filters
@@ -1723,15 +1723,19 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 				if line[19] != "NA" and line[19] in [trip[keys][18] for keys in trip]:
 					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
 						dict_spl_ins = trip[keys][-2]
-						#dict_mq = float(trip[keys][-1].split(" ")[0])
+						dict_mq = float(trip[keys][-1].split(" ")[0])
 						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 						if line[19] == trip[keys][18]:
-							if spl_ins >= dict_spl_ins-(2*cutoffScore) and spl_ins <= dict_spl_ins+(2*cutoffScore) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both, filter first based on phasing
-								if phasing_pct > dict_phasing_pct:
+							if spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+								if phasing_pct > dict_phasing_pct: # filter first based on phasing
 									del trip[keys]
 								elif dict_phasing_pct > phasing_pct:
 									pr = 1
-								elif spl_ins > dict_spl_ins:
+								elif mq > 15 and dict_mq < 15: # filter second based on map qual
+									del trip[keys]
+								elif mq < 15 and dict_mq > 15:
+									pr = 1
+								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
 								else:
 									pr = 1
@@ -1743,7 +1747,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 				### b2) check if exactly the same VDJ is already annotated...
 				elif line[0] in trip: 
 					dict_spl_ins = trip[line[0]][-2]
-					#dict_mq = float(trip[line[0]][-1].split(" ")[0])
+					dict_mq = float(trip[line[0]][-1].split(" ")[0])
 					dict_cdr3 = trip[line[0]][18]
 					dict_phasing_pct = 0 if trip[line[0]][13] == "NA" else float(trip[line[0]][13].split("/")[0])/float(trip[line[0]][13].split(" ")[0].split("/")[1])*100 if trip[line[0]][13].split(" ")[0].split("/")[1] != "0" else 100
 
@@ -1751,12 +1755,16 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						del trip[line[0]]
 					elif line[19] == "NA" and dict_cdr3 != "NA":
 						pr = 1
-					elif spl_ins >= dict_spl_ins-(2*cutoffScore) and spl_ins <= dict_spl_ins+(2*cutoffScore) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both, filter first based on phasing
-						if phasing_pct > dict_phasing_pct:
+					elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+						if phasing_pct > dict_phasing_pct: # filter first based on phasing
 							del trip[line[0]]
 						elif dict_phasing_pct > phasing_pct:
 							pr = 1
-						elif spl_ins > dict_spl_ins:
+						elif mq > 15 and dict_mq < 15: # filter second based on map qual
+							del trip[line[0]]
+						elif mq < 15 and dict_mq > 15:
+							pr = 1
+						elif spl_ins > dict_spl_ins: # filter third based on score
 							del trip[line[0]]
 						else:
 							pr = 1
@@ -1772,7 +1780,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						nw = line[0].split(" - ") # new value
 						common = set(ts).intersection(nw) # intersection between values in dict and value analysed
 						dict_spl_ins = trip[keys][-2]
-						#dict_mq = float(trip[keys][-1].split(" ")[0])
+						dict_mq = float(trip[keys][-1].split(" ")[0])
 						dict_cdr3 = trip[keys][18]
 						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 
@@ -1786,12 +1794,16 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 								del trip[keys]
 							elif line[19] == "NA" and dict_cdr3 != "NA":
 								pr = 1
-							elif spl_ins >= dict_spl_ins-(2*cutoffScore) and spl_ins <= dict_spl_ins+(2*cutoffScore) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both, filter first based on phasing
-								if phasing_pct > dict_phasing_pct:
+							elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+								if phasing_pct > dict_phasing_pct: # filter first based on phasing
 									del trip[keys]
 								elif dict_phasing_pct > phasing_pct:
 									pr = 1
-								elif spl_ins > dict_spl_ins:
+								elif mq > 15 and dict_mq < 15: # filter second based on map qual
+									del trip[keys]
+								elif mq < 15 and dict_mq > 15:
+									pr = 1
+								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
 								else:
 									pr = 1
