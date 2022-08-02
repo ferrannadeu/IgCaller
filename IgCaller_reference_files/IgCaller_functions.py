@@ -1731,9 +1731,9 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 									del trip[keys]
 								elif dict_phasing_pct > phasing_pct:
 									pr = 1
-								elif mq > 15 and dict_mq < 15: # filter second based on map qual
+								elif mq > 50 and dict_mq < 10: # filter second based on map qual
 									del trip[keys]
-								elif mq < 15 and dict_mq > 15:
+								elif mq < 10 and dict_mq > 50:
 									pr = 1
 								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
@@ -1760,9 +1760,9 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 							del trip[line[0]]
 						elif dict_phasing_pct > phasing_pct:
 							pr = 1
-						elif mq > 15 and dict_mq < 15: # filter second based on map qual
+						elif mq > 50 and dict_mq < 10: # filter second based on map qual
 							del trip[line[0]]
-						elif mq < 15 and dict_mq > 15:
+						elif mq < 10 and dict_mq > 50:
 							pr = 1
 						elif spl_ins > dict_spl_ins: # filter third based on score
 							del trip[line[0]]
@@ -1784,8 +1784,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						dict_cdr3 = trip[keys][18]
 						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 
-						#### 2 genes in common (for IGH)
-						if len(common) == 2: 
+						#### 2 genes in common or same IGHJ breaks + CDR3 inside
+						if (len(common) == 2) or (nw[0].startswith("IGHJ") and line[4] == trip[keys][3] and line[5] == trip[keys][4] and (line[19] in dict_cdr3 or dict_cdr3 in line[19])):
 							if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
 								pr = 1
 							elif len(ts) < len(nw): # if the other way around... keep the new one
@@ -1799,9 +1799,9 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 									del trip[keys]
 								elif dict_phasing_pct > phasing_pct:
 									pr = 1
-								elif mq > 15 and dict_mq < 15: # filter second based on map qual
+								elif mq > 50 and dict_mq < 10: # filter second based on map qual
 									del trip[keys]
-								elif mq < 15 and dict_mq > 15:
+								elif mq < 10 and dict_mq > 50:
 									pr = 1
 								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
