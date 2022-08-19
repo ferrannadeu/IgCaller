@@ -1,4 +1,4 @@
-# IgCaller_functions [v1.2.1]
+# IgCaller_functions [v1.2.2]
 
 # Modules
 import subprocess
@@ -644,7 +644,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 				readsSpanningJV = []
 				for readLine in JV_list:
 					readList = readLine.rstrip("\n").split("\t")
-					if ( (J == readList[16] or J == readList[18]) and (V == readList[17] or V == readList[19]) ) or (J == readList[17] or J == readList[19]) and (V == readList[16] or V == readList[18]):
+					if ( (J == readList[16] or J == readList[18]) and (V == readList[17] or V == readList[19]) ) or ( (J == readList[17] or J == readList[19]) and (V == readList[16] or V == readList[18]) ):
 						readsSpanningJV.append(readList[0])
 				subprocess.call(pathToSamtools+"samtools view -H "+miniBamT+" > "+miniBamT.replace("miniBam.bam", "miniSam_readsSpanningJV.sam"), shell=True)
 				JV_sam = open(miniBamT.replace("miniBam.bam", "miniSam_readsSpanningJV.sam"), "a")
@@ -657,13 +657,39 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 				subprocess.call(pathToSamtools+"samtools index "+miniBamT.replace("miniBam.bam", "miniBam_readsSpanningJV.bam"), shell=True) 
 				subprocess.call(pathToSamtools+"samtools mpileup -a -B -A -Q "+baseq+fr+chromGene+":"+str(i[z])+"-"+str(i[z+1])+" "+miniBamT.replace("miniBam.bam", "miniBam_readsSpanningJV.bam")+ " > "+miniBamT.replace(".bam", "_output_mpileup_readsSpanningJV.tsv"), shell=True) # allow -A (anomalous read pairs) in tumor sample only
 				
-				# correct empty mpileup tumor only reads
+				# correct empty mpileup tumor only reads spanning V-J
 				if os.stat(miniBamT.replace(".bam", "_output_mpileup_readsSpanningJV.tsv")).st_size == 0:
 					O = open(miniBamT.replace(".bam", "_output_mpileup_readsSpanningJV.tsv"), "w")
 					for missingPos in range(i[z], i[z+1]+1):
 						O.write("%s\t%s\tNA\t0\tNA\tNA\n" %(chromGene, str(missingPos)))
 					O.close()					
 				
+				# mpileup tumor only reads spanning exact breakpoints
+				J = str(i[5])
+				V = str(i[7])
+				readsSpanningBreak = []
+				for readLine in JV_list:
+					readList = readLine.rstrip("\n").split("\t")
+					if ( (J == readList[12] or J == readList[14]) and (V == readList[13] or V == readList[15]) ) or ( (J == readList[13] or J == readList[15]) and (V == readList[12] or V == readList[14]) ):
+						readsSpanningBreak.append(readList[0])
+				subprocess.call(pathToSamtools+"samtools view -H "+miniBamT+" > "+miniBamT.replace("miniBam.bam", "miniSam_readsSpanningBreak.sam"), shell=True)
+				Break_sam = open(miniBamT.replace("miniBam.bam", "miniSam_readsSpanningBreak.sam"), "a")
+				miniSam = open(miniBamT.replace("miniBam.bam", "miniSam.sam"), "r")
+				for readLine in miniSam:
+					if readLine.rstrip("\n").split("\t")[0] in readsSpanningBreak:
+						Break_sam.write(readLine)
+				Break_sam.close()
+				subprocess.call(pathToSamtools+"samtools view -h -b -o "+miniBamT.replace("miniBam.bam", "miniBam_readsSpanningBreak.bam")+" "+miniBamT.replace("miniBam.bam", "miniSam_readsSpanningBreak.sam"), shell=True) 
+				subprocess.call(pathToSamtools+"samtools index "+miniBamT.replace("miniBam.bam", "miniBam_readsSpanningBreak.bam"), shell=True) 
+				subprocess.call(pathToSamtools+"samtools mpileup -a -B -A -Q "+baseq+fr+chromGene+":"+str(i[z])+"-"+str(i[z+1])+" "+miniBamT.replace("miniBam.bam", "miniBam_readsSpanningBreak.bam")+ " > "+miniBamT.replace(".bam", "_output_mpileup_readsSpanningBreak.tsv"), shell=True) # allow -A (anomalous read pairs) in tumor sample only
+				
+				# correct empty mpileup tumor only reads spanning exact breakpoints
+				if os.stat(miniBamT.replace(".bam", "_output_mpileup_readsSpanningBreak.tsv")).st_size == 0:
+					O = open(miniBamT.replace(".bam", "_output_mpileup_readsSpanningBreak.tsv"), "w")
+					for missingPos in range(i[z], i[z+1]+1):
+						O.write("%s\t%s\tNA\t0\tNA\tNA\n" %(chromGene, str(missingPos)))
+					O.close()
+
 				# check if mpileup result with all reads
 				if os.stat(miniBamT.replace(".bam", "_output_mpileup.tsv")).st_size != 0:
 					
@@ -774,6 +800,7 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 					# Tumor seq:				
 					current = open(miniBamT.replace(".bam", "_output_mpileup.tsv"), "r")
 					currentJV = open(miniBamT.replace(".bam", "_output_mpileup_readsSpanningJV.tsv"), "r")
+					currentBreak = open(miniBamT.replace(".bam", "_output_mpileup_readsSpanningBreak.tsv"), "r")
 					
 					tumSeq = []
 					normSeq = []
@@ -785,15 +812,21 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 					
 					passar = 0 # used to jump sequences if there is a deletion in tumor sequence
 					sq = int(i[z])
-					for j, j2 in zip(current, currentJV):
+					for j, j2, j3 in zip(current, currentJV, currentBreak):
+
+						# phased with exact breakpoints
+						if int(j3.rstrip("\n").split("\t")[3]) >= depth: 
+							v=j3.rstrip("\n").split("\t")
+							vafCutoffToUse = float(vafCutoff[0]) 
+							inPhase = "yes"
 
 						# phased with J-V reads
-						if int(j2.rstrip("\n").split("\t")[3]) >= depth: 
+						elif int(j2.rstrip("\n").split("\t")[3]) >= depth: 
 							v=j2.rstrip("\n").split("\t")
 							vafCutoffToUse = float(vafCutoff[0]) 
 							inPhase = "yes"
 
-						# not directly phased with J-V reads
+						# not directly phased with breakpoints or J-V reads
 						else: 
 							depthMutPhase = 0 # initialize
 							j3 = "" # initialize
@@ -1012,6 +1045,8 @@ def getJandVsequences(JV_list, information, GENE, refGenome, baseq, chromGene, b
 						sq += 1
 					
 					current.close()
+					currentJV.close()
+					currentBreak.close()
 					
 					# Adjust length tumor and normal if nucleotides missing:
 					if sq-1 < int(i[z+1]):
@@ -1739,6 +1774,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 									del trip[keys]
 								else:
 									pr = 1
+							elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
+								del trip[keys]
 							elif spl_ins > dict_spl_ins: # different scores or one lower than 2*cutoffScore, keep highest score
 								del trip[keys]
 							else:
@@ -1768,6 +1805,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 							del trip[line[0]]
 						else:
 							pr = 1
+					elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
+						del trip[keys]
 					elif spl_ins > dict_spl_ins: # different scores or one lower than 2*cutoffScore, keep highest score
 						del trip[line[0]]
 					else:
@@ -1794,6 +1833,8 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 								del trip[keys]
 							elif line[19] == "NA" and dict_cdr3 != "NA":
 								pr = 1
+							elif line[5] != trip[keys][4] and line[7] != trip[keys][6]: # if different breakpoints, keep both
+								pr = 0
 							elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
 								if phasing_pct > dict_phasing_pct: # filter first based on phasing
 									del trip[keys]
@@ -1803,10 +1844,14 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 									del trip[keys]
 								elif mq < 10 and dict_mq > 50:
 									pr = 1
+								elif line[5] != trip[keys][4] or line[7] != trip[keys][6]: # if similar score, same phasing, similar mq, and at least one different breakpoint, keep both 
+									pr = 0
 								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
 								else:
 									pr = 1
+							elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.65: # if capture, prioritize phasing over score
+								del trip[keys]
 							elif spl_ins > dict_spl_ins: # just by different score
 								del trip[keys]					
 							else:
