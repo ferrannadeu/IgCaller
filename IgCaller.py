@@ -4,9 +4,9 @@ import subprocess
 import sys
 
 # Manage inputs
-parser  = argparse.ArgumentParser(prog='IgCaller', description='''IgCaller v1.2.1 (https://github.com/ferrannadeu/IgCaller)''')
+parser  = argparse.ArgumentParser(prog='IgCaller', description='''IgCaller v1.2.2 (https://github.com/ferrannadeu/IgCaller)''')
 
-parser.add_argument('-v', '--version', action='version', version="%(prog)s v1.2.1")
+parser.add_argument('-v', '--version', action='version', version="%(prog)s v1.2.2")
 
 parser.add_argument('-I', '--inputsFolder',
 					dest = "inputsFolder",
@@ -340,7 +340,7 @@ else: SUMM.write("Oncogenic IG rearrangement\tNo rearrangements found"+"\tNA"*9+
 
 
 # 16) Clean intermediate files and close
-comms = "rm "+wkDir+"/*.sam "+wkDir+"/*miniBam.bam "+wkDir+"/*miniBam.bam.bai "+wkDir+"/*miniBam_readsSpanningJV.bam "+wkDir+"/*miniBam_readsSpanningJV.bam.bai "+wkDir+"/*MutPhased.bam "+wkDir+"/*MutPhased.bam.bai "+wkDir+"/*_output_mpileup.tsv "+wkDir+"/*_readsSpanningJV.tsv "+wkDir+"/*_miniSam_splitinsert.tsv "+wkDir+"/*_miniSam_splitinsert_VJ.tsv "+wkDir+"/*MutPhased.tsv"  
+comms = "rm "+wkDir+"/*.sam "+wkDir+"/*miniBam.bam "+wkDir+"/*miniBam.bam.bai "+wkDir+"/*miniBam_readsSpanningJV.bam "+wkDir+"/*miniBam_readsSpanningJV.bam.bai "+wkDir+"/*miniBam_readsSpanningBreak.bam "+wkDir+"/*miniBam_readsSpanningBreak.bam.bai "+wkDir+"/*MutPhased.bam "+wkDir+"/*MutPhased.bam.bai "+wkDir+"/*_output_mpileup.tsv "+wkDir+"/*_readsSpanningJV.tsv "+wkDir+"/*_readsSpanningBreak.tsv "+wkDir+"/*_miniSam_splitinsert.tsv "+wkDir+"/*_miniSam_splitinsert_VJ.tsv "+wkDir+"/*MutPhased.tsv"  
 subprocess.call(comms, shell=True)
 if keepMiniIgBams != "yes":
 	comms = "rm "+wkDir+"/*.bam "+wkDir+"/*.bam.bai"  
