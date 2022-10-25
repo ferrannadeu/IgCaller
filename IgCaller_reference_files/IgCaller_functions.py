@@ -597,11 +597,11 @@ def addPositionsAndOccurrences(pos, bedFile, shortV, data, seq):
 			
 			information.append(row)
 	
-	# added to remove pairs with only insertSize reads and <=1 split-read in capture (ie high coverage)
+	# added to remove pairs with only insertSize in capture (ie high coverage)
 	if seq == "capture":
 		informationMoreThanOne = []
 		for info in information:
-			if info[2] > 1:
+			if info[2] > 1 or (info[2] == 1 and info[3] > 2):
 				informationMoreThanOne.append(info)
 		return(informationMoreThanOne)
 	else:
