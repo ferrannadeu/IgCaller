@@ -91,9 +91,12 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 Bugs, comments and improvements can be send to *nadeu@recerca.clinic.cat*.
 
 ### Releases
-* Master branch (v1.2.2):
-  * Added phasing of reads based on exact breakpoints/split reads prior to consider phasing reads just if they span the given J-V pair. It allows the identification of multiple rearrangements within the same J and V genes if their breakpoints are different. 
-  * Improved selection of high-confidence rearrangements after additional testing.
+* Master branch (v1.3):
+  * Improved annotation of the IG genes involved in the translocations identified.
+  * Improved selection of high-confidence rearrangements.
+  * From v1.2.2:
+    * Added phasing of reads based on exact breakpoints/split reads prior to consider phasing reads just if they span the given J-V pair. It allows the identification of multiple rearrangements within the same J and V genes if their breakpoints are different. 
+    * Improved selection of high-confidence rearrangements after additional testing.
   * From v1.2.1:
     * Improved phasing of mutations within the rearranged allele. When reads spanning the J-V rearrangement are not covering a fraction of the V gene, IgCaller now tries to phase reads on the fly based on the previous mutations identified in the V gene. This new functionality improves the capacity to phase mutations and SNPs while increases the sensitivity to detect mutations specially in heavily mutated V genes. If this phasing of reads based on mutations does not recover any phased read covering a given position, all reads covering this specific position are then considered.
     * Phasing information is now considered when selecting high-confidence rearrangements to be included in 'tumor_sample_output_filtered.tsv'.
