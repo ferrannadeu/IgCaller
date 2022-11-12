@@ -1,4 +1,4 @@
-# IgCaller_functions [v1.2.2]
+# IgCaller_functions [v1.3]
 
 # Modules
 import subprocess
@@ -1772,17 +1772,17 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 									pr = 1
 								elif spl_ins > dict_spl_ins: # filter third based on score
 									del trip[keys]
-								else:
+								elif spl_ins < dict_spl_ins: 
 									pr = 1
 							elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
 								del trip[keys]
-							elif spl_ins > dict_spl_ins: # different scores or one lower than 2*cutoffScore, keep highest score
+							elif spl_ins > dict_spl_ins: # different scores, keep highest score
 								del trip[keys]
-							else:
+							elif spl_ins < dict_spl_ins:
 								pr = 1
 			
 				### b2) check if exactly the same VDJ is already annotated...
-				elif line[0] in trip: 
+				if line[0] in trip:
 					dict_spl_ins = trip[line[0]][-2]
 					dict_mq = float(trip[line[0]][-1].split(" ")[0])
 					dict_cdr3 = trip[line[0]][18]
@@ -1807,63 +1807,67 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 							pr = 1
 					elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
 						del trip[keys]
-					elif spl_ins > dict_spl_ins: # different scores or one lower than 2*cutoffScore, keep highest score
+					elif spl_ins > dict_spl_ins: # different scores, keep highest score
 						del trip[line[0]]
 					else:
 						pr = 1
 				
 				### b3) check if a "not exact VDJ" is already annotated...
-				else:
-					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
-						ts = keys.split(" - ") # annotated values
-						nw = line[0].split(" - ") # new value
-						common = set(ts).intersection(nw) # intersection between values in dict and value analysed
-						dict_spl_ins = trip[keys][-2]
-						dict_mq = float(trip[keys][-1].split(" ")[0])
-						dict_cdr3 = trip[keys][18]
-						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
+				for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
+					ts = keys.split(" - ") # annotated values
+					nw = line[0].split(" - ") # new value
+					common = set(ts).intersection(nw) # intersection between values in dict and value analysed
+					dict_spl_ins = trip[keys][-2]
+					dict_mq = float(trip[keys][-1].split(" ")[0])
+					dict_cdr3 = trip[keys][18]
+					dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 
-						#### 2 genes in common or same IGHJ breaks + CDR3 inside
-						if (len(common) == 2) or (nw[0].startswith("IGHJ") and line[4] == trip[keys][3] and line[5] == trip[keys][4] and (line[19] in dict_cdr3 or dict_cdr3 in line[19])):
-							if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
+					#### 2 genes in common or same IGHJ breaks + CDR3 inside
+					if (len(common) == 2) or (nw[0].startswith("IGHJ") and line[4] == trip[keys][3] and line[5] == trip[keys][4] and (line[19] in dict_cdr3 or dict_cdr3 in line[19])):
+						if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
+							pr = 1
+						elif len(ts) < len(nw): # if the other way around... keep the new one
+							del trip[keys]
+						elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
+							del trip[keys]
+						elif line[19] == "NA" and dict_cdr3 != "NA":
+							pr = 1
+						elif line[5] != trip[keys][4] and line[7] != trip[keys][6]: # if different breakpoints, keep both if similar score
+							if spl_ins*0.5 > dict_spl_ins: 
+								del trip[keys]
+							elif spl_ins*1.5 < dict_spl_ins:
 								pr = 1
-							elif len(ts) < len(nw): # if the other way around... keep the new one
-								del trip[keys]
-							elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
-								del trip[keys]
-							elif line[19] == "NA" and dict_cdr3 != "NA":
-								pr = 1
-							elif line[5] != trip[keys][4] and line[7] != trip[keys][6]: # if different breakpoints, keep both
-								pr = 0
-							elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
-								if phasing_pct > dict_phasing_pct: # filter first based on phasing
-									del trip[keys]
-								elif dict_phasing_pct > phasing_pct:
-									pr = 1
-								elif mq > 50 and dict_mq < 10: # filter second based on map qual
-									del trip[keys]
-								elif mq < 10 and dict_mq > 50:
-									pr = 1
-								elif line[5] != trip[keys][4] or line[7] != trip[keys][6]: # if similar score, same phasing, similar mq, and at least one different breakpoint, keep both 
-									pr = 0
-								elif spl_ins > dict_spl_ins: # filter third based on score
-									del trip[keys]
-								else:
-									pr = 1
-							elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.65: # if capture, prioritize phasing over score
-								del trip[keys]
-							elif spl_ins > dict_spl_ins: # just by different score
-								del trip[keys]					
 							else:
+								pr = 0							
+						elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+							if phasing_pct > dict_phasing_pct: # filter first based on phasing
+								del trip[keys]
+							elif dict_phasing_pct > phasing_pct:
 								pr = 1
-						
-						#### 1 gene in common (IGLV or IGKV gene)
-						elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
-							if nw[1].replace("D", "") == ts[1].replace("D", "") and ts[0] != "IGKKde":
-								if spl_ins > dict_spl_ins:
-									del trip[keys]
-								else:
-									pr = 1
+							elif mq > 50 and dict_mq < 10: # filter second based on map qual
+								del trip[keys]
+							elif mq < 10 and dict_mq > 50:
+								pr = 1
+							elif line[5] != trip[keys][4] or line[7] != trip[keys][6]: # if similar score, same phasing, similar mq, and at least one different breakpoint, keep both 
+								pr = 0
+							elif spl_ins > dict_spl_ins: # filter third based on score
+								del trip[keys]
+							elif spl_ins < dict_spl_ins:
+								pr = 1 
+						elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.65: # if capture, prioritize phasing over score
+							del trip[keys]
+						elif spl_ins > dict_spl_ins: # just by different score
+							del trip[keys]					
+						elif spl_ins < dict_spl_ins:
+								pr = 1
+					
+					#### 1 gene in common (IGLV or IGKV gene)
+					elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
+						if nw[1].replace("D", "") == ts[1].replace("D", "") and ts[0] != "IGKKde":
+							if spl_ins > dict_spl_ins:
+								del trip[keys]
+							elif spl_ins < dict_spl_ins:
+								pr = 1
 				
 				### b4) add if needed
 				if pr == 0:
@@ -2086,7 +2090,7 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 				# check if new one-read translocation could be added to an already merged potential translocation;
 				if key2 in translocations[key1]:
 					for item2 in translocations[key1][key2]:
-						if ( abs(int(item[0]) - int(item2[1])) < 1000 or abs(int(item[0]) - int(item2[2])) < 1000 ) and item[1] == item2[3] and ( abs(int(item[2]) - int(item2[5])) < 1000 or abs(int(item[2]) - int(item2[6])) < 1000 )  and item[3] == item2[7]:
+						if ( abs(int(item[0]) - int(item2[1])) < 200 or abs(int(item[0]) - int(item2[2])) < 200 ) and item[1] == item2[3] and ( abs(int(item[2]) - int(item2[5])) < 1000 or abs(int(item[2]) - int(item2[6])) < 1000 )  and item[3] == item2[7]:
 							item2[1] = str(min([int(item2[1]), int(item[0])]))
 							item2[2] = str(max([int(item2[2]), int(item[0])]))
 							item2[5] = str(min([int(item2[5]), int(item[2])]))
@@ -2104,7 +2108,7 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 						strand2 = item[3]
 						alreadyConsidered = "yes"
 					
-					elif  min(abs(p1 - int(item[0])) for p1 in position1) < 1000 and strand1 == item[1] and min(abs(p2 - int(item[2])) for p2 in position2) < 1000 and strand2 == item[3]:
+					elif  min(abs(p1 - int(item[0])) for p1 in position1) < 200 and strand1 == item[1] and min(abs(p2 - int(item[2])) for p2 in position2) < 1000 and strand2 == item[3]:
 						position1.append(int(item[0]))
 						position2.append(int(item[2]))
 				
@@ -2174,7 +2178,7 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 				
 				if outChrom not in translocations[inChrom]: continue
 				for trans in translocations[inChrom][outChrom]:
-					if trans[0] == inChrom and int(trans[1])-1000 <= posInChrom and int(trans[2])+1000 >= posInChrom and trans[3] == strandInChrom and trans[4] == outChrom and int(trans[5])-1000 <= posOutChrom and int(trans[6])+1000 >= posOutChrom and trans[7] == strandOutChrom:
+					if trans[0] == inChrom and int(trans[1])-200 <= posInChrom and int(trans[2])+200 >= posInChrom and trans[3] == strandInChrom and trans[4] == outChrom and int(trans[5])-1000 <= posOutChrom and int(trans[6])+1000 >= posOutChrom and trans[7] == strandOutChrom:
 						trans[9] = trans[9]+1
 		
 		samfile.close()
@@ -2251,12 +2255,26 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 		scoreNormal = i[9]
 		
 		
-		# RepeatMasker and GeneID:	
+		# RepeatMasker and GeneID:
 		minDistance = 250000
-		repeatMasker = "none"	
-		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0])-200 and int(positionA) <= int(chrom14[1])+200: geneID = "IGH"
-		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0])-200 and int(positionA) <= int(chrom22[1])+200: geneID = "IGL"
-		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0])-200 and int(positionA) <= int(chrom2[1])+200: geneID = "IGK"
+		repeatMasker = "none"
+		if genomeVersion == "hg19":
+			AllGenesBedToOpen = inputsFolder+"/hg19/dicts/AllRegionsAndGenes_hg19.bed"
+		elif genomeVersion == "hg38":
+			AllGenesBedToOpen = inputsFolder+"/hg38/dicts/AllRegionsAndGenes_hg38.bed"
+		
+		breakAisIG = "no"
+		if chrA == chrom+"14" and int(positionA) >= int(chrom14[0])-200 and int(positionA) <= int(chrom14[1])+200: geneID = "IGH"; locusID = "IGH"; breakAisIG = "yes"
+		elif chrA == chrom+"22" and int(positionA) >= int(chrom22[0])-200 and int(positionA) <= int(chrom22[1])+200: geneID = "IGL"; locusID = "IGL"; breakAisIG = "yes"
+		elif chrA == chrom+"2" and int(positionA) >= int(chrom2[0])-200 and int(positionA) <= int(chrom2[1])+200: geneID = "IGK"; locusID = "IGK"; breakAisIG = "yes"
+		if breakAisIG == "yes":
+			AllGenesBed = open(AllGenesBedToOpen, "r")
+			for AllGenesBedLine in AllGenesBed:
+				AllGenesBedList = AllGenesBedLine.rstrip("\n").split("\t")
+				if chrA.replace("chr", "") == AllGenesBedList[0] and int(positionA) >= (int(AllGenesBedList[1])-5) and int(positionA) <= (int(AllGenesBedList[2])+5):
+					geneID = AllGenesBedList[3]
+					break
+			AllGenesBed.close()
 		else:
 			gene = ""
 			for element in GeneID_dicti[chrA.replace("chr","")]:
@@ -2270,16 +2288,25 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 			if gene.startswith("IGHV"): repeatMasker = "IGHV_pseudogene"
 			if gene.startswith("IGHD"): repeatMasker = "IGHD_pseudogene"
 			geneID = gene if gene != "" else "none"
+			locusID = "NoIG"
 			minDistance = minDistance if minDistance < 250000 else "NA"
 			
 			for element in RepeatMasker_dicti[chrA.replace("chr","")]:
 				if int(positionA) >= int(element[0]) - mask_expand and int(positionA) <= int(element[1]) + mask_expand:
 					repeatMasker = element[2]
 					break
-		
-		if chrB == chrom+"14" and int(positionB) >= int(chrom14[0])-200 and int(positionB) <= int(chrom14[1])+200: geneID = geneID+" - IGH"
-		elif chrB == chrom+"22" and int(positionB) >= int(chrom22[0])-200 and int(positionB) <= int(chrom22[1])+200: geneID = geneID+" - IGL"
-		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0])-200 and int(positionB) <= int(chrom2[1])+200: geneID = geneID+" - IGK"
+		breakBisIG = "no"
+		if chrB == chrom+"14" and int(positionB) >= int(chrom14[0])-200 and int(positionB) <= int(chrom14[1])+200: geneID = geneID+" - IGH"; locusID = locusID+" - IGH"; breakBisIG = "yes"
+		elif chrB == chrom+"22" and int(positionB) >= int(chrom22[0])-200 and int(positionB) <= int(chrom22[1])+200: geneID = geneID+" - IGL"; locusID = locusID+" - IGL"; breakBisIG = "yes"
+		elif chrB == chrom+"2" and int(positionB) >= int(chrom2[0])-200 and int(positionB) <= int(chrom2[1])+200: geneID = geneID+" - IGK"; locusID = locusID+" - IGK"; breakBisIG = "yes"
+		if breakBisIG == "yes":
+			AllGenesBed = open(AllGenesBedToOpen, "r")
+			for AllGenesBedLine in AllGenesBed:
+				AllGenesBedList = AllGenesBedLine.rstrip("\n").split("\t")
+				if chrB.replace("chr", "") == AllGenesBedList[0] and int(positionB) >= (int(AllGenesBedList[1])-5) and int(positionB) <= (int(AllGenesBedList[2])+5):
+					geneID = geneID.split(" - ")[0]+" - "+AllGenesBedList[3]
+					break
+			AllGenesBed.close()
 		else:
 			gene = ""
 			for element in GeneID_dicti[chrB.replace("chr","")]:
@@ -2294,6 +2321,7 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 			if gene.startswith("IGHV"): repeatMasker = "IGHV_pseudogene"
 			if gene.startswith("IGHD"): repeatMasker = "IGHD_pseudogene"
 			geneID = geneID+" - "+gene
+			locusID = locusID+" - "+"NoIG"
 			minDistance = minDistance if minDistance < 250000 else "NA"
 			
 			for element in RepeatMasker_dicti[chrB.replace("chr","")]:
@@ -2303,17 +2331,17 @@ def getIgTranslocations(genomeVersion, inputsFolder, pathToSamtools, threadsForS
 		
 		
 		# remove sv within the same IG locus
-		if geneID in ["IGH - IGH", "IGK - IGK", "IGL - IGL"]: continue 
+		if breakAisIG == "yes" and breakBisIG == "yes": continue
 		
 		
 		# PoN:
 		ponCount = 0
 		
-		if geneID.split(" - ")[0] in ["IGH", "IGK", "IGL"]: 
-			igLocus = geneID.split(" - ")[0]
+		if breakAisIG == "yes": 
+			igLocus = locusID.split(" - ")[0]
 			igOrder = 0
 		else:
-			igLocus = geneID.split(" - ")[1]
+			igLocus = locusID.split(" - ")[1]
 			igOrder = 1
 		
 		if genomeVersion == "hg19": PoN = open(inputsFolder+'/hg19/PoN/hg19_PoN.tsv', 'r')
