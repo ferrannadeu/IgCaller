@@ -1,13 +1,14 @@
 Rearrangement	Mechanism	Score	Reads in normal	Count in PoN	RepeatMasker	ChrA	PositionA	StrandA	ChrB	PositionB	StrandB	GeneID	Distance to gene
 t(2;7)	Translocation	18.0	20	242	HSATII;Satellite;Satellite	2	89836793	+	7	57548864	+	IGK - ZNF716	15599
-t(14;15)	Translocation	17.0	17	252	none	14	106636491	-	15	20173183	+	IGH - none	NA
 gain(14:106035708-106155669)	Gain	12.0	14	225	(CA)n;Simple_repeat;Simple_repeat	14	106035708	-	14	106155669	+	LOC105370697 - IGH	35053
 t(2;16)	Translocation	12.0	12	182	HSATII;Satellite;Satellite	2	89836759	-	16	33878889	-	IGK - MIR9901	87155
-del(14:106035745-106155929)	Deletion	11.0	12	190	(CA)n;Simple_repeat;Simple_repeat	14	106035745	+	14	106155929	-	LOC105370697 - IGH	35090
-t(14;15)	Translocation	9.0	11	248	none	14	106636628	+	15	20172716	-	IGH - none	NA
-t(2;22)	Translocation	9.0	3	232	(G)n;Simple_repeat;Simple_repeat	2	33141325	-	22	22900994	+	LINC00486 - IGL	0
-t(15;22)	Translocation	7.0	12	44	L1PA2;LINE;L1	15	87071321	-	22	22715602	+	AGBL1 - IGL	0
+del(14:106035745-106155929)	Deletion	11.0	11	190	(CA)n;Simple_repeat;Simple_repeat	14	106035745	+	14	106155929	-	LOC105370697 - IGH	35090
+t(14;15)	Translocation	9.0	12	252	none	14	106636822	-	15	20173183	+	IGH - none	NA
+t(14;15)	Translocation	7.0	7	248	none	14	106636249	+	15	20172716	-	IGH - none	NA
+t(15;22)	Translocation	7.0	11	44	L1PA2;LINE;L1	15	87071321	-	22	22715602	+	AGBL1 - IGL	0
+t(14;15)	Translocation	6.0	5	252	none	14	106636533	-	15	20172790	+	IGH - none	NA
 t(2;16)	Translocation	6.0	8	139	HSATII;Satellite;Satellite	2	89836829	-	16	34184914	+	IGK - CCNYL3	79805
 t(6;22)	Translocation	6.0	3	1	none	6	161082192	-	22	22464432	+	LPA - IGL	0
 t(14;18)	Translocation	5.0	7	214	(CA)n;Simple_repeat;Simple_repeat	14	106319877	+	18	62646152	+	IGH - none	NA
+t(2;22)	Translocation	5.0	2	232	(G)n;Simple_repeat;Simple_repeat	2	33141325	-	22	22900325	+	LINC00486 - IGL	0
 t(4;22)	Translocation	5.0	2	3	L1HS;LINE;L1	4	46799105	+	22	22715704	-	COX7B2 - IGL	0
