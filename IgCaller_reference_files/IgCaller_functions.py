@@ -1761,7 +1761,7 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 						dict_mq = float(trip[keys][-1].split(" ")[0])
 						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
 						if line[19] == trip[keys][18]:
-							if spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+							if spl_ins >= dict_spl_ins*0.75 and spl_ins <= dict_spl_ins*1.25: # if similar scores
 								if phasing_pct > dict_phasing_pct: # filter first based on phasing
 									del trip[keys]
 								elif dict_phasing_pct > phasing_pct:
@@ -1780,94 +1780,95 @@ def predefinedFilter(information, GENE, seq, scoreCutoff):
 								del trip[keys]
 							elif spl_ins < dict_spl_ins:
 								pr = 1
-			
-				### b2) check if exactly the same VDJ is already annotated...
-				if line[0] in trip:
-					dict_spl_ins = trip[line[0]][-2]
-					dict_mq = float(trip[line[0]][-1].split(" ")[0])
-					dict_cdr3 = trip[line[0]][18]
-					dict_phasing_pct = 0 if trip[line[0]][13] == "NA" else float(trip[line[0]][13].split("/")[0])/float(trip[line[0]][13].split(" ")[0].split("/")[1])*100 if trip[line[0]][13].split(" ")[0].split("/")[1] != "0" else 100
-
-					if line[19] != "NA" and dict_cdr3 == "NA": # if the same VDJ, keep the one with info in CDR3 aa seq
-						del trip[line[0]]
-					elif line[19] == "NA" and dict_cdr3 != "NA":
-						pr = 1
-					elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
-						if phasing_pct > dict_phasing_pct: # filter first based on phasing
-							del trip[line[0]]
-						elif dict_phasing_pct > phasing_pct:
-							pr = 1
-						elif mq > 50 and dict_mq < 10: # filter second based on map qual
-							del trip[line[0]]
-						elif mq < 10 and dict_mq > 50:
-							pr = 1
-						elif spl_ins > dict_spl_ins: # filter third based on score
-							del trip[line[0]]
-						else:
-							pr = 1
-					elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
-						del trip[keys]
-					elif spl_ins > dict_spl_ins: # different scores, keep highest score
-						del trip[line[0]]
-					else:
-						pr = 1
 				
-				### b3) check if a "not exact VDJ" is already annotated...
-				for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
-					ts = keys.split(" - ") # annotated values
-					nw = line[0].split(" - ") # new value
-					common = set(ts).intersection(nw) # intersection between values in dict and value analysed
-					dict_spl_ins = trip[keys][-2]
-					dict_mq = float(trip[keys][-1].split(" ")[0])
-					dict_cdr3 = trip[keys][18]
-					dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
+				else:
+					### b2) check if exactly the same VDJ is already annotated...
+					if line[0] in trip:
+						dict_spl_ins = trip[line[0]][-2]
+						dict_mq = float(trip[line[0]][-1].split(" ")[0])
+						dict_cdr3 = trip[line[0]][18]
+						dict_phasing_pct = 0 if trip[line[0]][13] == "NA" else float(trip[line[0]][13].split("/")[0])/float(trip[line[0]][13].split(" ")[0].split("/")[1])*100 if trip[line[0]][13].split(" ")[0].split("/")[1] != "0" else 100
 
-					#### 2 genes in common or same IGHJ breaks + CDR3 inside
-					if (len(common) == 2) or (nw[0].startswith("IGHJ") and line[4] == trip[keys][3] and line[5] == trip[keys][4] and (line[19] in dict_cdr3 or dict_cdr3 in line[19])):
-						if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
-							pr = 1
-						elif len(ts) < len(nw): # if the other way around... keep the new one
-							del trip[keys]
-						elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
-							del trip[keys]
+						if line[19] != "NA" and dict_cdr3 == "NA": # if the same VDJ, keep the one with info in CDR3 aa seq
+							del trip[line[0]]
 						elif line[19] == "NA" and dict_cdr3 != "NA":
 							pr = 1
-						elif line[5] != trip[keys][4] and line[7] != trip[keys][6]: # if different breakpoints, keep both if similar score
-							if spl_ins*0.5 > dict_spl_ins: 
-								del trip[keys]
-							elif spl_ins*1.5 < dict_spl_ins:
-								pr = 1
-							else:
-								pr = 0							
-						elif spl_ins >= dict_spl_ins-(0.25*dict_spl_ins) and spl_ins <= dict_spl_ins+(0.25*dict_spl_ins) and spl_ins > 2*cutoffScore and dict_spl_ins > 2*cutoffScore: # if similar scores and higher than 2*cutoffScore in both
+						elif spl_ins >= dict_spl_ins*0.75 and spl_ins <= dict_spl_ins*1.25: # if similar scores
 							if phasing_pct > dict_phasing_pct: # filter first based on phasing
-								del trip[keys]
+								del trip[line[0]]
 							elif dict_phasing_pct > phasing_pct:
 								pr = 1
 							elif mq > 50 and dict_mq < 10: # filter second based on map qual
-								del trip[keys]
+								del trip[line[0]]
 							elif mq < 10 and dict_mq > 50:
 								pr = 1
-							elif line[5] != trip[keys][4] or line[7] != trip[keys][6]: # if similar score, same phasing, similar mq, and at least one different breakpoint, keep both 
-								pr = 0
 							elif spl_ins > dict_spl_ins: # filter third based on score
-								del trip[keys]
-							elif spl_ins < dict_spl_ins:
-								pr = 1 
-						elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.65: # if capture, prioritize phasing over score
+								del trip[line[0]]
+							else:
+								pr = 1
+						elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.45: # if capture, prioritize phasing over score
 							del trip[keys]
-						elif spl_ins > dict_spl_ins: # just by different score
-							del trip[keys]					
-						elif spl_ins < dict_spl_ins:
-								pr = 1
+						elif spl_ins > dict_spl_ins: # different scores, keep highest score
+							del trip[line[0]]
+						else:
+							pr = 1
 					
-					#### 1 gene in common (IGLV or IGKV gene)
-					elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
-						if nw[1].replace("D", "") == ts[1].replace("D", "") and ts[0] != "IGKKde":
-							if spl_ins > dict_spl_ins:
-								del trip[keys]
-							elif spl_ins < dict_spl_ins:
+					### b3) check if a "not exact VDJ" is already annotated...
+					for keys in [k for k in trip]: # make list of keys to avoid dictionary changed size during iteration
+						ts = keys.split(" - ") # annotated values
+						nw = line[0].split(" - ") # new value
+						common = set(ts).intersection(nw) # intersection between values in dict and value analysed
+						dict_spl_ins = trip[keys][-2]
+						dict_mq = float(trip[keys][-1].split(" ")[0])
+						dict_cdr3 = trip[keys][18]
+						dict_phasing_pct = 0 if trip[keys][13] == "NA" else float(trip[keys][13].split("/")[0])/float(trip[keys][13].split(" ")[0].split("/")[1])*100 if trip[keys][13].split(" ")[0].split("/")[1] != "0" else 100
+
+						#### 2 genes in common or same IGHJ breaks + CDR3 inside
+						if (len(common) == 2) or (nw[0].startswith("IGHJ") and line[4] == trip[keys][3] and line[5] == trip[keys][4] and (line[19] in dict_cdr3 or dict_cdr3 in line[19])):
+							if len(ts) > len(nw): # if the one annotated has len=3 (VDJ) and the new one 2 (VJ), keep the one annotated
 								pr = 1
+							elif len(ts) < len(nw): # if the other way around... keep the new one
+								del trip[keys]
+							elif line[19] != "NA" and dict_cdr3 == "NA": # keep the one with info in CDR3 aa seq
+								del trip[keys]
+							elif line[19] == "NA" and dict_cdr3 != "NA":
+								pr = 1
+							elif line[5] != trip[keys][4] and line[7] != trip[keys][6]: # if different breakpoints, keep both if similar score
+								if spl_ins*0.5 > dict_spl_ins: 
+									del trip[keys]
+								elif spl_ins*1.5 < dict_spl_ins:
+									pr = 1
+								else:
+									pr = 0							
+							elif spl_ins >= dict_spl_ins*0.75 and spl_ins <= dict_spl_ins*1.25: # if similar scores
+								if phasing_pct > dict_phasing_pct: # filter first based on phasing
+									del trip[keys]
+								elif dict_phasing_pct > phasing_pct:
+									pr = 1
+								elif mq > 50 and dict_mq < 10: # filter second based on map qual
+									del trip[keys]
+								elif mq < 10 and dict_mq > 50:
+									pr = 1
+								elif line[5] != trip[keys][4] or line[7] != trip[keys][6]: # if similar score, same phasing, similar mq, and at least one different breakpoint, keep both 
+									pr = 0
+								elif spl_ins > dict_spl_ins: # filter third based on score
+									del trip[keys]
+								elif spl_ins < dict_spl_ins:
+									pr = 1 
+							elif seq == "capture" and phasing_pct == 100 and phasing_pct > dict_phasing_pct and spl_ins >= dict_spl_ins*0.65: # if capture, prioritize phasing over score
+								del trip[keys]
+							elif spl_ins > dict_spl_ins: # just by different score
+								del trip[keys]					
+							elif spl_ins < dict_spl_ins:
+									pr = 1
+						
+						#### 1 gene in common (IGLV or IGKV gene)
+						elif len(common) == 1 and (nw[1].startswith("IGLV") or nw[1].replace("D", "").startswith("IGKV")):
+							if nw[1].replace("D", "") == ts[1].replace("D", "") and ts[0] != "IGKKde":
+								if spl_ins > dict_spl_ins:
+									del trip[keys]
+								elif spl_ins < dict_spl_ins:
+									pr = 1
 				
 				### b4) add if needed
 				if pr == 0:
