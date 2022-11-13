@@ -91,7 +91,7 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 Bugs, comments and improvements can be send to *nadeu@recerca.clinic.cat*.
 
 ### Releases
-* Master branch (v1.3):
+* v1.3:
   * Improved annotation of the IG genes involved in the translocations identified.
   * Improved selection of high-confidence rearrangements.
   * From v1.2.2:
