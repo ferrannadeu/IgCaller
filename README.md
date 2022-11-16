@@ -26,6 +26,12 @@ Starting at version 1.4-beta, run also the following command to allow executable
 chmod +x /path/to/IgCaller/IgCaller
 ```
 
+And consider adding it to your PATH environment variable:
+
+```
+export PATH=/path/to/IgCaller/:$PATH
+```
+
 ### Running IgCaller
 
 #### Mandatory arguments:
