@@ -67,12 +67,12 @@ export PATH=/path/to/IgCaller/:$PATH
 Starting at version 1.4-beta:
 
 ```
-path/to/IgCaller/IgCaller -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
+/path/to/IgCaller/IgCaller -I /path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T /path/to/bams/tumor.bam -N /path/to/bams/normal.bam -R /path/to/reference/genome_hg19.fa -o /path/to/IgCaller/outputs/
 ```
 
 For previous releases:
 ```
-python3 path/to/IgCaller/IgCaller.py -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
+python3 /path/to/IgCaller/IgCaller.py -I /path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T /path/to/bams/tumor.bam -N /path/to/bams/normal.bam -R /path/to/reference/genome_hg19.fa -o /path/to/IgCaller/outputs/
 ```
 
 #### Tested on:
