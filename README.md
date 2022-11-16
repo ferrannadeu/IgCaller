@@ -20,6 +20,12 @@ Download and uncompress the ZIP file or clone the IgCaller repository:
 git clone https://github.com/ferrannadeu/IgCaller
 ```
 
+Starting at version 1.4-beta, run also the following command to allow executable permissions:
+
+```
+chmod +x /path/to/IgCaller/IgCaller
+```
+
 ### Running IgCaller
 
 #### Mandatory arguments:
@@ -52,6 +58,13 @@ git clone https://github.com/ferrannadeu/IgCaller
 * maxNumberCountInPoN (-mncPoN): maximum number of count in panel of normals (PoN) in order to be considered as high confidence (default=2).
 
 #### Basic command line:
+Starting at version 1.4-beta:
+
+```
+path/to/IgCaller/IgCaller -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
+```
+
+For previous releases:
 ```
 python3 path/to/IgCaller/IgCaller.py -I path/to/IgCaller/IgCaller_reference_files/ -V hg19 -C ensembl -T path/to/bams/tumor.bam -N path/to/bams/normal.bam -R path/to/reference/genome_hg19.fa -o path/to/IgCaller/outputs/
 ```
@@ -91,6 +104,8 @@ Nadeu, F., Mas-de-les-Valls, R., Navarro, A. et al. IgCaller for reconstructing 
 Bugs, comments and improvements can be send to *nadeu@recerca.clinic.cat*.
 
 ### Releases
+* Master branch (v1.4-beta):
+  * Dockerfile and shebang included following [pull #6](https://github.com/ferrannadeu/IgCaller/pull/6).
 * v1.3:
   * Improved annotation of the IG genes involved in the translocations identified.
   * Improved selection of high-confidence rearrangements.
