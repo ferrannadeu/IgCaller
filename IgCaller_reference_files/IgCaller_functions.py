@@ -1,4 +1,4 @@
-# IgCaller_functions [v1.3]
+# IgCaller_functions [v1.4-beta]
 
 # Modules
 import subprocess
