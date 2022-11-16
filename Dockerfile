@@ -19,9 +19,8 @@ RUN set -e \
 RUN set -e \
       && cd / \
       && git clone https://github.com/ferrannadeu/IgCaller \
-      && sed -i '1 i #!/usr/bin/python3' /IgCaller/IgCaller.py \
-      && chmod +x IgCaller/IgCaller.py 
+      && chmod +x IgCaller/IgCaller 
 
 ENV PATH=/IgCaller/:${PATH}
 
-ENTRYPOINT ["IgCaller.py"]
+ENTRYPOINT ["IgCaller"]
