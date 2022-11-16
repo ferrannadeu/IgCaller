@@ -26,7 +26,7 @@ Starting at version 1.4-beta, run the following command to allow executable perm
 chmod +x /path/to/IgCaller/IgCaller
 ```
 
-And consider adding it to your PATH environment variable:
+And consider adding it to your PATH:
 
 ```
 export PATH=/path/to/IgCaller/:$PATH
