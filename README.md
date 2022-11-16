@@ -20,7 +20,7 @@ Download and uncompress the ZIP file or clone the IgCaller repository:
 git clone https://github.com/ferrannadeu/IgCaller
 ```
 
-Starting at version 1.4-beta, run also the following command to allow executable permissions:
+Starting at version 1.4-beta, run the following command to allow executable permissions:
 
 ```
 chmod +x /path/to/IgCaller/IgCaller
