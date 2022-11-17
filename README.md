@@ -112,6 +112,7 @@ Bugs, comments and improvements can be send to *nadeu@recerca.clinic.cat*.
 ### Releases
 * Master branch (v1.4-beta):
   * Dockerfile and shebang included following [pull #6](https://github.com/ferrannadeu/IgCaller/pull/6).
+  * Small edit to correct a warning message when trying to remove non-created temporary files in some situations.
 * v1.3:
   * Improved annotation of the IG genes involved in the translocations identified.
   * Improved selection of high-confidence rearrangements.
