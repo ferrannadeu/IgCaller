@@ -1,3 +1,9 @@
+> [!CAUTION]
+> **This repository has moved to https://github.com/nadeulab/IgCaller**
+>
+> This repository is no longer updated and is kept for historical/reference purposes only. Please use the new repository for the latest releases, documentation, bug fixes, and feature updates.
+
+
 # IgCaller
 
 #### Reconstructing immunoglobulin gene rearrangements and oncogenic translocations from WGS, WES, and capture NGS data
